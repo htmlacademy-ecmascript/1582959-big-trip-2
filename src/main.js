@@ -5,9 +5,10 @@ import BoardPresenter from './presenter/board-presenter.js';
 
 const tripMainContainer = document.querySelector('.trip-main');
 const filtersContainer = tripMainContainer.querySelector('.trip-controls__filters');
-const boardPresenter = new BoardPresenter({boardContainer: tripMainContainer});
+const eventsContainer = document.querySelector('.trip-events');
+const boardPresenter = new BoardPresenter({ container: eventsContainer });
 
-render(new FilterView(), filtersContainer);
 render(new InfoTripView(), tripMainContainer);
+render(new FilterView(), filtersContainer);
 
 boardPresenter.init();
