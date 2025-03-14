@@ -1,5 +1,17 @@
 const MAX_VALUE = 1000;
 
+const POINT_TYPE = [
+  'Taxi',
+  'Bus',
+  'Train',
+  'Ship',
+  'Drive',
+  'Flight',
+  'Check-in',
+  'Sightseeing',
+  'Restaurant'
+];
+
 const DESCRIPTIONS = [
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   'Cras aliquet varius magna, non porta ligula feugiat eget.',
@@ -24,8 +36,9 @@ const DESTINATIONS = [
 
 const DateFormat = {
   DAY: 'MMM D',
-  TIME: 'hh:mm',
-  FULL: 'YYYY-MM-DD'
+  TIME: 'HH:mm',
+  FULL: 'YYYY-MM-DD',
+  DAY_TIME: 'DD/MM/YY HH:mm'
 };
 
-export { MAX_VALUE, DESCRIPTIONS, DESTINATIONS, DateFormat };
+export { MAX_VALUE, DESCRIPTIONS, DESTINATIONS, DateFormat, POINT_TYPE };

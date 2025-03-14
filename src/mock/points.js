@@ -4,8 +4,8 @@ const mockPoints = [
   {
     id: 1,
     basePrice: 1100,
-    dateFrom: '25/12/19 16:00',
-    dateTo: '25/12/19 18:00',
+    dateFrom: '12/12/19 16:00',
+    dateTo: '12/12/19 16:43',
     destination: 11,
     isFavorite: false,
     offers: [
@@ -20,8 +20,9 @@ const mockPoints = [
     dateFrom: '01/01/19 10:00',
     dateTo: '01/01/19 13:00',
     destination: 12,
-    isFavorite: false,
+    isFavorite: true,
     offers: [
+      'flight-1',
       'flight-2',
       'flight-3'
     ],
@@ -31,8 +32,8 @@ const mockPoints = [
   {
     id: 3,
     basePrice: 1500,
-    dateFrom: '13/06/19 15:00',
-    dateTo: '14/06/19 10:00',
+    dateFrom: '02/06/19 15:00',
+    dateTo: '02/07/19 16:00',
     destination: 13,
     isFavorite: false,
     offers: [],
@@ -42,8 +43,8 @@ const mockPoints = [
   {
     id: 4,
     basePrice: 1100,
-    dateFrom: '01/05/19 09:00',
-    dateTo: '01/05/19 13:00',
+    dateFrom: '10/05/19 09:00',
+    dateTo: '10/05/19 13:00',
     destination: 14,
     isFavorite: false,
     offers: [],
@@ -53,8 +54,8 @@ const mockPoints = [
   {
     id: 5,
     basePrice: 500,
-    dateFrom: '21/08/19 16:00',
-    dateTo: '21/08/19 18:00',
+    dateFrom: '08/21/19 16:00',
+    dateTo: '08/21/19 18:00',
     destination: 15,
     isFavorite: true,
     offers: [
