@@ -1,5 +1,3 @@
-const MAX_VALUE = 1000;
-
 const POINT_TYPE = [
   'Taxi',
   'Bus',
@@ -41,4 +39,4 @@ const DateFormat = {
   DAY_TIME: 'DD/MM/YY HH:mm'
 };
 
-export { MAX_VALUE, DESCRIPTIONS, DESTINATIONS, DateFormat, POINT_TYPE };
+export { DESCRIPTIONS, DESTINATIONS, DateFormat, POINT_TYPE };
