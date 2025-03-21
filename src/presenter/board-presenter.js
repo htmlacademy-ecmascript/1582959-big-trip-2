@@ -70,14 +70,13 @@ export default class BoardPresenter {
   }
 
   #renderComponent() {
+    render(this.#sortComponent, this.#container);
     render(this.#eventListComponent, this.#container);
 
     if (this.#points.length === 0) {
       render(new NoPointView(), this.#eventListComponent.element);
       return;
     }
-
-    render(this.#sortComponent, this.#container);
 
     for (let i = 0; i < this.#points.length; i++) {
       const offersByType = this.#offersModel.getOffersByType(this.#points[i].type);
