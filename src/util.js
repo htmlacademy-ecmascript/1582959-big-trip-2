@@ -24,17 +24,10 @@ function getEventDuration(dateFrom, dateTo) {
   return `${daysOutput} ${hoursOutput} ${minutesOutput}`;
 }
 
-const getRandomInteger = (min, max) => {
-  const lower = Math.ceil(Math.min(min, max));
-  const upper = Math.floor(Math.max(min, max));
-  const result = Math.random() * (upper - lower + 1) + lower;
-  return Math.floor(result);
-};
-
 const getRandomArrayElement = (items) => items[Math.floor(Math.random() * items.length)];
 
 function capitalizeFirstLetter(value) {
   return String(value).charAt(0).toUpperCase() + String(value).slice(1);
 }
 
-export { getRandomInteger, getRandomArrayElement, convertDate, getEventDuration, capitalizeFirstLetter };
+export { getRandomArrayElement, convertDate, getEventDuration, capitalizeFirstLetter };

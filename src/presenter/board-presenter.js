@@ -2,36 +2,86 @@ import EventListView from '../view/event-list-view.js';
 import FormEditView from '../view/form-edit-view.js';
 import PointView from '../view/point-view.js';
 import SortView from '../view/sort-view.js';
-import { render } from '../render.js';
+import NoPointView from '../view/no-point-view.js';
+import { render, replace } from '../framework/render.js';
 
 export default class BoardPresenter {
-  sortComponent = new SortView();
-  eventListComponent = new EventListView();
+  #container = null;
+  #pointsModel = null;
+  #offersModel = null;
+  #destinationsModel = null;
+  #points = [];
+
+  #sortComponent = new SortView();
+  #eventListComponent = new EventListView();
 
   constructor({ container, pointsModel, offersModel, destinationsModel }) {
-    this.container = container;
-    this.pointsModel = pointsModel;
-    this.offersModel = offersModel;
-    this.destinationsModel = destinationsModel;
+    this.#container = container;
+    this.#pointsModel = pointsModel;
+    this.#offersModel = offersModel;
+    this.#destinationsModel = destinationsModel;
   }
 
   init() {
-    this.points = [...this.pointsModel.getPoints()];
+    this.#points = [...this.#pointsModel.points];
 
-    render(this.sortComponent, this.container);
-    render(this.eventListComponent, this.container);
-    render(new FormEditView({
-      point: this.points[0],
-      offers: this.offersModel.getOffersByType(this.points[0].type),
-      destination: this.destinationsModel.getDestinationById(this.points[0].destination)
-    }), this.eventListComponent.getElement());
+    this.#renderComponent();
+  }
 
-    for (let i = 0; i < this.points.length; i++) {
-      render(new PointView({
-        point: this.points[i],
-        offers: this.offersModel.getOffersByType(this.points[i].type),
-        destination: this.destinationsModel.getDestinationById(this.points[i].destination)
-      }), this.eventListComponent.getElement());
+  #renderPoint(point, offers, destination) {
+
+    const onEscapeKeydown = (evt) => {
+      if (evt.key === 'Escape') {
+        evt.preventDefault();
+        replaceFormEditToPoint();
+        document.removeEventListener('keydown', onEscapeKeydown);
+      }
+    };
+
+    const pointList = new PointView({
+      point, offers, destination,
+      onRollupButtonClick: () => {
+        replacePointToFormEdit();
+        document.addEventListener('keydown', onEscapeKeydown);
+      }
+    });
+
+    const formEditList = new FormEditView({
+      point, offers, destination,
+      onFormSubmit: () => {
+        replaceFormEditToPoint();
+        document.removeEventListener('keydown', onEscapeKeydown);
+      },
+      onRollupButtonClick: () => {
+        replaceFormEditToPoint();
+        document.removeEventListener('keydown', onEscapeKeydown);
+      }
+    });
+
+    function replacePointToFormEdit() {
+      replace(formEditList, pointList);
+    }
+
+    function replaceFormEditToPoint() {
+      replace(pointList, formEditList);
+    }
+
+    render(pointList, this.#eventListComponent.element);
+  }
+
+  #renderComponent() {
+    render(this.#sortComponent, this.#container);
+    render(this.#eventListComponent, this.#container);
+
+    if (this.#points.length === 0) {
+      render(new NoPointView(), this.#eventListComponent.element);
+      return;
+    }
+
+    for (let i = 0; i < this.#points.length; i++) {
+      const offersByType = this.#offersModel.getOffersByType(this.#points[i].type);
+      const destinationById = this.#destinationsModel.getDestinationById(this.#points[i].destination);
+      this.#renderPoint(this.#points[i], offersByType, destinationById);
     }
   }
 }
