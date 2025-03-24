@@ -1,4 +1,4 @@
-const POINT_TYPE = [
+const POINT_TYPES = [
   'Taxi',
   'Bus',
   'Train',
@@ -9,6 +9,13 @@ const POINT_TYPE = [
   'Sightseeing',
   'Restaurant'
 ];
+
+const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PRESENT: 'present',
+  PAST: 'past'
+};
 
 const DESCRIPTIONS = [
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
@@ -39,4 +46,4 @@ const DateFormat = {
   DAY_TIME: 'DD/MM/YY HH:mm'
 };
 
-export { DESCRIPTIONS, DESTINATIONS, DateFormat, POINT_TYPE };
+export { DESCRIPTIONS, DESTINATIONS, DateFormat, POINT_TYPES, FilterType };

@@ -24,10 +24,8 @@ function getEventDuration(dateFrom, dateTo) {
   return `${daysOutput} ${hoursOutput} ${minutesOutput}`;
 }
 
-const getRandomArrayElement = (items) => items[Math.floor(Math.random() * items.length)];
+const isFuturePoint = ({ dateFrom }) => dayjs().isBefore(dateFrom, 'day');
+const isPresentPoint = ({ dateFrom }) => dayjs().isSame(dateFrom, 'day');
+const isPastPoint = ({ dateFrom }) => dayjs().isAfter(dateFrom, 'day');
 
-function capitalizeFirstLetter(value) {
-  return String(value).charAt(0).toUpperCase() + String(value).slice(1);
-}
-
-export { getRandomArrayElement, convertDate, getEventDuration, capitalizeFirstLetter };
+export { convertDate, getEventDuration, isFuturePoint, isPresentPoint, isPastPoint };

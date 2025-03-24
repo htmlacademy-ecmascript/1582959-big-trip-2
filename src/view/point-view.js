@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { DateFormat } from '../const.js';
-import { convertDate, getEventDuration } from '../util.js';
+import { convertDate, getEventDuration } from '../utils/main.js';
 
 function createOffersTemplate(offersPoint, offers) {
   if (offersPoint.offers) {
