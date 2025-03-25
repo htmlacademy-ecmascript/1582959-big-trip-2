@@ -1,11 +1,11 @@
-import { getRandomArrayElement } from '../util.js';
+import { getRandomArrayElement } from '../utils/common.js';
 
 const mockPoints = [
   {
     id: 1,
     basePrice: 1100,
-    dateFrom: '12/12/19 16:00',
-    dateTo: '12/12/19 16:43',
+    dateFrom: '12/12/25 16:00',
+    dateTo: '12/12/25 16:43',
     destination: 11,
     isFavorite: false,
     offers: [

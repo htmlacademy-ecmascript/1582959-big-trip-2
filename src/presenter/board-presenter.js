@@ -3,7 +3,7 @@ import FormEditView from '../view/form-edit-view.js';
 import PointView from '../view/point-view.js';
 import SortView from '../view/sort-view.js';
 import NoPointView from '../view/no-point-view.js';
-import { render, replace } from '../framework/render.js';
+import { render, replace, RenderPosition } from '../framework/render.js';
 
 export default class BoardPresenter {
   #container = null;
@@ -33,8 +33,7 @@ export default class BoardPresenter {
     const onEscapeKeydown = (evt) => {
       if (evt.key === 'Escape') {
         evt.preventDefault();
-        replaceFormEditToPoint();
-        document.removeEventListener('keydown', onEscapeKeydown);
+        removeFormEdit();
       }
     };
 
@@ -49,12 +48,10 @@ export default class BoardPresenter {
     const formEditList = new FormEditView({
       point, offers, destination,
       onFormSubmit: () => {
-        replaceFormEditToPoint();
-        document.removeEventListener('keydown', onEscapeKeydown);
+        removeFormEdit();
       },
       onRollupButtonClick: () => {
-        replaceFormEditToPoint();
-        document.removeEventListener('keydown', onEscapeKeydown);
+        removeFormEdit();
       }
     });
 
@@ -66,17 +63,23 @@ export default class BoardPresenter {
       replace(pointList, formEditList);
     }
 
+    function removeFormEdit() {
+      replaceFormEditToPoint();
+      document.removeEventListener('keydown', onEscapeKeydown);
+    }
+
     render(pointList, this.#eventListComponent.element);
   }
 
   #renderComponent() {
-    render(this.#sortComponent, this.#container);
     render(this.#eventListComponent, this.#container);
 
     if (this.#points.length === 0) {
       render(new NoPointView(), this.#eventListComponent.element);
       return;
     }
+
+    render(this.#sortComponent, this.#container, RenderPosition.AFTERBEGIN);
 
     for (let i = 0; i < this.#points.length; i++) {
       const offersByType = this.#offersModel.getOffersByType(this.#points[i].type);

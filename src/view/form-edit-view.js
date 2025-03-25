@@ -1,20 +1,21 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { convertDate } from '../util.js';
-import { POINT_TYPE, DateFormat } from '../const.js';
+import { convertDate } from '../utils/main.js';
+import { POINT_TYPES, DateFormat } from '../const.js';
 
-function createEventTypeItem(type, index) {
+function createEventTypeItem(type) {
   return `
     <div class="event__type-item">
-      <input id="event-type-${type}-${index}" class="event__type-input visually-hidden" type="radio" name="event-type" value="${type}">
-      <label class="event__type-label event__type-label--${type}" for="event-type-${type}-${index}">${type}</label>
+      <input id="event-type-${type}-1" class="event__type-input visually-hidden" type="radio" name="event-type" value="${type}">
+      <label class="event__type-label event__type-label--${type}" for="event-type-${type}-1">${type}</label>
     </div>
   `;
 }
 
-let result = '';
-POINT_TYPE.forEach((type, index) => {
-  result += createEventTypeItem(type, index + 1);
-});
+function createEventTypesItemTemplate() {
+  return POINT_TYPES
+    .map((type) => createEventTypeItem(type))
+    .join('');
+}
 
 function createOffersTemplate(offersPoint, offers) {
   if (offersPoint.offers) {
@@ -64,7 +65,7 @@ function createEventTemplate(point, destination, offersPoint) {
           <div class="event__type-list">
               <fieldset class="event__type-group">
               <legend class="visually-hidden">Event type</legend>
-              ${result}
+              ${createEventTypesItemTemplate()}
 
               </fieldset>
           </div>
