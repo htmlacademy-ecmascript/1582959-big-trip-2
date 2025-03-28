@@ -155,7 +155,7 @@ export default class FormEditView extends AbstractView {
 
   #onFormSubmit = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit();
+    this.#handleFormSubmit(this.#point);
   };
 
   #onEventRollupButtonClick = (evt) => {
