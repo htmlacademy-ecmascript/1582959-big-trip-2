@@ -54,7 +54,7 @@ export default class MainPresenter {
       onModeChange: this.#handleModeChange
     });
 
-    pointPresenter.init(point, offers, destination);
+    pointPresenter.init({ point, offers, destination });
     this.#pointPresenters.set(point.id, pointPresenter);
   }
 

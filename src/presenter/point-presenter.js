@@ -21,7 +21,7 @@ export default class PointPresenter {
     this.#handleModeChange = onModeChange;
   }
 
-  init(point, offers, destination) {
+  init({ point, offers, destination }) {
     this.#point = point;
     this.#offers = offers;
     this.#destination = destination;
@@ -101,12 +101,12 @@ export default class PointPresenter {
     this.#replaceFormEditToPoint();
   };
 
-  #handleFormSubmit = () => {
-    // this.#handleDataChange(point);
+  #handleFormSubmit = (point) => {
+    this.#handleDataChange(point);
     this.#replaceFormEditToPoint();
   };
 
   #handleFavoriteButtonClick = () => {
-    // this.#handleDataChange({ ...this.#point, isFavorite: !this.#point.isFavorite });
+    this.#handleDataChange({ ...this.#point, isFavorite: !this.#point.isFavorite });
   };
 }
