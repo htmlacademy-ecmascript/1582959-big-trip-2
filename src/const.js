@@ -46,4 +46,10 @@ const DateFormat = {
   DAY_TIME: 'DD/MM/YY HH:mm'
 };
 
-export { DESCRIPTIONS, DESTINATIONS, DateFormat, POINT_TYPES, FilterType };
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
+
+
+export { DESCRIPTIONS, DESTINATIONS, DateFormat, POINT_TYPES, FilterType, Mode };
