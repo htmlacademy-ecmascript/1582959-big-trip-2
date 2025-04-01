@@ -17,6 +17,14 @@ const FilterType = {
   PAST: 'past'
 };
 
+const SortType = {
+  DAY: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFERS: 'offers'
+};
+
 const DESCRIPTIONS = [
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   'Cras aliquet varius magna, non porta ligula feugiat eget.',
@@ -52,4 +60,4 @@ const Mode = {
 };
 
 
-export { DESCRIPTIONS, DESTINATIONS, DateFormat, POINT_TYPES, FilterType, Mode };
+export { DESCRIPTIONS, DESTINATIONS, DateFormat, POINT_TYPES, FilterType, Mode, SortType };

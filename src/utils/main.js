@@ -28,4 +28,19 @@ const isFuturePoint = ({ dateFrom }) => dayjs().isBefore(dateFrom, 'day');
 const isPresentPoint = ({ dateFrom }) => dayjs().isSame(dateFrom, 'day');
 const isPastPoint = ({ dateFrom }) => dayjs().isAfter(dateFrom, 'day');
 
-export { convertDate, getEventDuration, isFuturePoint, isPresentPoint, isPastPoint };
+function sortByPrice(points) {
+  return points.sort((a, b) => b.basePrice - a.basePrice);
+}
+
+function calculateDuration(point) {
+  const dateFrom = dayjs(point.dateFrom);
+  const dateTo = dayjs(point.dateTo);
+
+  return dateTo.diff(dateFrom);
+}
+
+function sortByTime(points) {
+  return points.sort((a, b) => calculateDuration(b) - calculateDuration(a));
+}
+
+export { convertDate, getEventDuration, isFuturePoint, isPresentPoint, isPastPoint, sortByPrice, sortByTime };
