@@ -5,7 +5,7 @@ import NoPointView from '../view/no-point-view.js';
 import PointPresenter from './point-presenter.js';
 import { render, RenderPosition } from '../framework/render.js';
 import { updateItem } from '../utils/common.js';
-import { sortByPrice, sortByTime } from '../utils/main.js';
+import { sortByDay, sortByPrice, sortByTime } from '../utils/main.js';
 import { SortType } from '../const.js';
 
 export default class MainPresenter {
@@ -18,8 +18,8 @@ export default class MainPresenter {
 
   #points = [];
   #pointPresenters = new Map();
-  #currentSortType = SortType.DAY;
   #sourcedPoints = [];
+  #currentSortType = SortType.DAY;
 
   #sortComponent = null;
   #filterComponent = null;
@@ -58,11 +58,14 @@ export default class MainPresenter {
 
   #sortPoints(sortType) {
     switch (sortType) {
+      case SortType.DAY:
+        this.#points.sort(sortByDay);
+        break;
       case SortType.PRICE:
-        this.#points = [...sortByPrice(this.#points)];
+        this.#points.sort(sortByPrice);
         break;
       case SortType.TIME:
-        this.#points = [...sortByTime(this.#points)];
+        this.#points.sort(sortByTime);
         break;
       default:
         this.#points = [...this.#sourcedPoints];
@@ -127,7 +130,7 @@ export default class MainPresenter {
       return;
     }
 
-    this.#renderSort();
     this.#renderPoints();
+    this.#renderSort();
   }
 }

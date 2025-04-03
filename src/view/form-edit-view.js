@@ -2,18 +2,16 @@ import AbstractView from '../framework/view/abstract-view.js';
 import { convertDate } from '../utils/main.js';
 import { POINT_TYPES, DateFormat } from '../const.js';
 
-function createEventTypeItem(type) {
-  return `
-    <div class="event__type-item">
-      <input id="event-type-${type}-1" class="event__type-input visually-hidden" type="radio" name="event-type" value="${type}">
-      <label class="event__type-label event__type-label--${type}" for="event-type-${type}-1">${type}</label>
-    </div>
-  `;
-}
-
-function createEventTypesItemTemplate() {
+function createEventTypesItemTemplate(pointType) {
   return POINT_TYPES
-    .map((type) => createEventTypeItem(type))
+    .map((type) => (
+      `
+      <div class="event__type-item">
+        <input id="event-type-${type}-1" class="event__type-input visually-hidden" type="radio" name="event-type" value="${type}" ${type === pointType ? 'checked' : ''}>
+        <label class="event__type-label event__type-label--${type}" for="event-type-${type}-1">${type}</label>
+      </div>
+    `
+    ))
     .join('');
 }
 
@@ -65,7 +63,7 @@ function createEventTemplate(point, destination, offersPoint) {
           <div class="event__type-list">
               <fieldset class="event__type-group">
               <legend class="visually-hidden">Event type</legend>
-              ${createEventTypesItemTemplate()}
+              ${createEventTypesItemTemplate(type)}
 
               </fieldset>
           </div>
@@ -100,7 +98,7 @@ function createEventTemplate(point, destination, offersPoint) {
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">Cancel</button>
+          <button class="event__reset-btn" type="reset">Delete</button>
           <button class="event__rollup-btn" type="button">
             <span class="visually-hidden">Open event</span>
           </button>
