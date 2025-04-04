@@ -1,33 +1,45 @@
 import EventListView from '../view/event-list-view.js';
 import SortView from '../view/sort-view.js';
+import FilterView from '../view/filter-view.js';
 import NoPointView from '../view/no-point-view.js';
 import PointPresenter from './point-presenter.js';
 import { render, RenderPosition } from '../framework/render.js';
 import { updateItem } from '../utils/common.js';
+import { sortByDay, sortByPrice, sortByTime } from '../utils/main.js';
+import { SortType } from '../const.js';
 
 export default class MainPresenter {
   #container = null;
+  #filterContainer = document.querySelector('.trip-controls__filters');
+
   #pointsModel = null;
   #offersModel = null;
   #destinationsModel = null;
+
   #points = [];
   #pointPresenters = new Map();
+  #sourcedPoints = [];
+  #currentSortType = SortType.DAY;
 
-  #sortComponent = new SortView();
+  #sortComponent = null;
+  #filterComponent = null;
   #eventListComponent = new EventListView();
   #noPointComponent = new NoPointView();
 
-  constructor({ container, pointsModel, offersModel, destinationsModel }) {
+  constructor({ container, pointsModel, offersModel, destinationsModel, filters }) {
     this.#container = container;
     this.#pointsModel = pointsModel;
     this.#offersModel = offersModel;
     this.#destinationsModel = destinationsModel;
+    this.#filterComponent = new FilterView({ filters });
   }
 
   init() {
     this.#points = [...this.#pointsModel.points];
+    this.#sourcedPoints = [...this.#pointsModel.points];
 
     this.#renderComponent();
+    this.#renderFilter();
   }
 
   #handleModeChange = () => {
@@ -36,6 +48,7 @@ export default class MainPresenter {
 
   #handlePointChange = (updatedPoint) => {
     this.#points = updateItem(this.#points, updatedPoint);
+    this.#sourcedPoints = updateItem(this.#sourcedPoints, updatedPoint);
     this.#pointPresenters.get(updatedPoint.id).init({
       point: updatedPoint,
       offers: this.#offersModel.getOffersByType(updatedPoint.type),
@@ -43,8 +56,42 @@ export default class MainPresenter {
     });
   };
 
+  #sortPoints(sortType) {
+    switch (sortType) {
+      case SortType.DAY:
+        this.#points.sort(sortByDay);
+        break;
+      case SortType.PRICE:
+        this.#points.sort(sortByPrice);
+        break;
+      case SortType.TIME:
+        this.#points.sort(sortByTime);
+        break;
+      default:
+        this.#points = [...this.#sourcedPoints];
+    }
+    this.#currentSortType = sortType;
+  }
+
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+
+    this.#sortPoints(sortType);
+    this.#clearPoints();
+    this.#renderPoints();
+  };
+
   #renderSort() {
+    this.#sortComponent = new SortView({
+      onSortTypeChange: this.#handleSortTypeChange
+    });
     render(this.#sortComponent, this.#container, RenderPosition.AFTERBEGIN);
+  }
+
+  #renderFilter() {
+    render(this.#filterComponent, this.#filterContainer);
   }
 
   #renderPoint(point, offers, destination) {
@@ -82,8 +129,8 @@ export default class MainPresenter {
       this.#renderNoPoint();
       return;
     }
-
-    this.#renderSort();
+    this.#sortPoints(SortType.DAY);
     this.#renderPoints();
+    this.#renderSort();
   }
 }
