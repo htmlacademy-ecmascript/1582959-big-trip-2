@@ -129,7 +129,7 @@ export default class MainPresenter {
       this.#renderNoPoint();
       return;
     }
-
+    this.#sortPoints(SortType.DAY);
     this.#renderPoints();
     this.#renderSort();
   }
