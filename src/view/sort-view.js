@@ -47,10 +47,16 @@ export default class SortView extends AbstractView {
   }
 
   #onSortButtonClick = (evt) => {
-    if (!evt.target.closest('.trip-sort__btn')) {
+
+    const sortButton = evt.target.closest('.trip-sort__btn');
+    if (!sortButton) {
       return;
     }
-    if (evt.target.dataset.sortType === SortType.EVENT || evt.target.dataset.sortType === SortType.OFFERS) {
+
+    const inputId = sortButton.getAttribute('for');
+    const input = document.getElementById(inputId);
+
+    if (input && input.disabled) {
       return;
     }
 

@@ -28,7 +28,7 @@ const mockDestinations = [
 
   {
     id: 12,
-    description: getRandomArrayElement(DESCRIPTIONS),
+    description: '',
     name: getRandomArrayElement(DESTINATIONS),
     pictures: []
   },

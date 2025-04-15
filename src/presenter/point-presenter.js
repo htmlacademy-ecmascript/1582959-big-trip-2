@@ -43,6 +43,7 @@ export default class PointPresenter {
       destination: this.#destination,
       onFormSubmit: this.#handleFormSubmit,
       onRollupButtonClick: this.#handleRollupButtonClick,
+      onResetButtonClick: this.#handleResetButtonClick,
     });
 
     if (prevPointListComponent === null || prevFormEditListComponent === null) {
@@ -69,6 +70,7 @@ export default class PointPresenter {
 
   resetView() {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#formEditListComponent.reset(this.#point, this.#offers, this.#destination);
       this.#replaceFormEditToPoint();
     }
   }
@@ -89,6 +91,7 @@ export default class PointPresenter {
   #onEscapeKeydown = (evt) => {
     if (evt.key === 'Escape') {
       evt.preventDefault();
+      this.#formEditListComponent.reset(this.#point, this.#offers, this.#destination);
       this.#replaceFormEditToPoint();
     }
   };
@@ -98,6 +101,12 @@ export default class PointPresenter {
   };
 
   #handleRollupButtonClick = () => {
+    this.#formEditListComponent.reset(this.#point, this.#offers, this.#destination);
+    this.#replaceFormEditToPoint();
+  };
+
+  #handleResetButtonClick = () => {
+    this.#formEditListComponent.reset(this.#point, this.#offers, this.#destination);
     this.#replaceFormEditToPoint();
   };
 
