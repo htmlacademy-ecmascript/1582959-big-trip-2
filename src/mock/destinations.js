@@ -1,11 +1,11 @@
 import { getRandomArrayElement } from '../utils/common.js';
-import { DESCRIPTIONS, DESTINATIONS } from '../const.js';
+import { DESCRIPTIONS } from '../const.js';
 
 const mockDestinations = [
   {
     id: 11,
     description: getRandomArrayElement(DESCRIPTIONS),
-    name: getRandomArrayElement(DESTINATIONS),
+    name: 'Chamonix',
     pictures: [
       {
         src: 'https://img.goodfon.ru/original/3901x2600/d/be/hong-kong-gonkong-megapolis.jpg',
@@ -29,14 +29,14 @@ const mockDestinations = [
   {
     id: 12,
     description: '',
-    name: getRandomArrayElement(DESTINATIONS),
+    name: 'Geneva',
     pictures: []
   },
 
   {
     id: 13,
     description: getRandomArrayElement(DESCRIPTIONS),
-    name: getRandomArrayElement(DESTINATIONS),
+    name: 'London',
     pictures: [
       {
         src: 'https://avatars.mds.yandex.net/i?id=f9e425807be3be06c12bd94bd549ffb3_l-5205329-images-thumbs&n=13',
@@ -48,7 +48,7 @@ const mockDestinations = [
   {
     id: 14,
     description: getRandomArrayElement(DESCRIPTIONS),
-    name: getRandomArrayElement(DESTINATIONS),
+    name: 'Amsterdam',
     pictures: [
       {
         src: 'https://i.pinimg.com/originals/57/9a/81/579a8119c135c5035bbd4e96df124c31.jpg',
@@ -64,7 +64,7 @@ const mockDestinations = [
   {
     id: 15,
     description: getRandomArrayElement(DESCRIPTIONS),
-    name: getRandomArrayElement(DESTINATIONS),
+    name: 'Moscow',
     pictures: [
       {
         src: 'https://avatars.mds.yandex.net/i?id=c45cc78c5548fe72ac9b3154c1126e03_l-4307487-images-thumbs&n=13',

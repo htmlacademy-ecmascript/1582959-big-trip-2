@@ -2,6 +2,8 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { convertDate } from '../utils/main.js';
 import { capitalizeFirstLetter } from '../utils/common.js';
 import { POINT_TYPES, DateFormat } from '../const.js';
+import { mockOffers } from '../mock/offers.js';
+import { mockDestinations } from '../mock/destinations.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
@@ -18,19 +20,19 @@ function createEventTypesItemTemplate(pointType) {
     .join('');
 }
 
-function createOffersTemplate(offersPoint, offers) {
-  if (offersPoint.offers) {
+function createOffersTemplate(offers, offersPoint = []) {
+  if (offersPoint.length) {
     return ` <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-    <div class="event__available-offers">
-    ${offersPoint.offers.map(({ title, price, id }) => (
+        <div class="event__available-offers">
+          ${offersPoint.map(({ title, price, id }) => (
     `<div class="event__offer-selector">
-        <input class="event__offer-checkbox visually-hidden" id="${id}" type="checkbox" name="${title}" ${offers.includes(id) ? 'checked' : ''}>
-        <label class="event__offer-label" for="${id}">
-          <span class="event__offer-title">${title}</span>
-          +€&nbsp;
-          <span class="event__offer-price">${price}</span>
-        </label>
-            </div>`)).join('')}
+          <input class="event__offer-checkbox visually-hidden" id="${id}" type="checkbox" name="${title}" ${offers.includes(id) ? 'checked' : ''}>
+          <label class="event__offer-label" for="${id}">
+            <span class="event__offer-title">${title}</span>
+            +€&nbsp;
+            <span class="event__offer-price">${price}</span>
+          </label>
+        </div>`)).join('')}
             </div>`;
   }
   return '';
@@ -51,12 +53,10 @@ function createDestinationTemplate(destination) {
   return '';
 }
 
-function createEventTemplate(point, destination, offersPoint) {
-  const { basePrice, dateFrom, dateTo, type, offers } = point;
-
+function createEventTemplate(point) {
+  const { basePrice, dateFrom, dateTo, type, offers, offersPoint, destination } = point;
   const dateStart = convertDate(dateFrom, DateFormat.DAY_TIME);
   const dateEnd = convertDate(dateTo, DateFormat.DAY_TIME);
-
   return `
   <li class="trip-events__item">
       <form class="event event--edit" action="#" method="post">
@@ -113,11 +113,11 @@ function createEventTemplate(point, destination, offersPoint) {
       </header>
       <section class="event__details">
       <section class="event__section  event__section--offers">
-          ${offersPoint.offers.length !== 0 ? createOffersTemplate(offersPoint, offers) : ''}
-          </section>
-
+      ${offersPoint.length !== 0 ? createOffersTemplate(offers, offersPoint) : ''}
+      </section>
           <section class="event__section  event__section--destination">
           ${destination.pictures.length !== 0 ? createDestinationTemplate(destination) : ''}
+
       </section>
       </section>
       </form>
@@ -148,7 +148,7 @@ export default class FormEditView extends AbstractStatefulView {
   }
 
   get template() {
-    return createEventTemplate(this.#point, this.#destination, this.#offersPoint);
+    return createEventTemplate(this._state);
   }
 
   _restoreHandlers() {
@@ -173,7 +173,9 @@ export default class FormEditView extends AbstractStatefulView {
   #onFormSubmit = (evt) => {
     evt.preventDefault();
     this.#handleFormSubmit(FormEditView.parseStateToPoint({
-      ...this.#point
+      ...this._state,
+      offers: this._state.offersPoint.map((offer) => offer.id),
+      destination: this._state.destination.id
     }));
   };
 
@@ -189,25 +191,26 @@ export default class FormEditView extends AbstractStatefulView {
 
   #onTypeChange = (evt) => {
     evt.preventDefault();
+    const typedOffers = mockOffers.find((offer) => offer.type === evt.target.value);
     this.updateElement({
       type: evt.target.value,
-      offersPoint: Object.keys(this.#offersPoint).find((offer) => offer.type === evt.target.value),
+      offersPoint: typedOffers === undefined ? [] : typedOffers.offers,
+      offers: []
     });
   };
 
   #onDestinationChange = (evt) => {
     evt.preventDefault();
-    const selectedDestination = Object.keys(this.#destination).find((dest) => dest.name === evt.target.value);
+    const selectedDestination = mockDestinations.find((destination) => destination.name === evt.target.value);
     if (!selectedDestination) {
       return;
     }
     this.updateElement({
-      description: selectedDestination.description,
-      photos: selectedDestination.photos
+      destination: selectedDestination,
     });
   };
 
-  static parsePointToState = (point) => ({ ...point });
+  static parsePointToState = (point, offersPoint, destination) => ({ ...point, offersPoint, destination });
 
   static parseStateToPoint = (state) => ({ ...state });
 
@@ -246,7 +249,7 @@ export default class FormEditView extends AbstractStatefulView {
       this.element.querySelector('#event-start-time-1'),
       {
         ...basicDateSettings,
-        defaultDate: this.#point.dateFrom,
+        defaultDate: this._state.dateFrom,
         onChange: this.#onDateFromChange
       }
     );
@@ -254,7 +257,7 @@ export default class FormEditView extends AbstractStatefulView {
       this.element.querySelector('#event-end-time-1'),
       {
         ...basicDateSettings,
-        defaultDate: this.#point.dateTo,
+        defaultDate: this._state.dateTo,
         onChange: this.#onDateToChange
       }
     );

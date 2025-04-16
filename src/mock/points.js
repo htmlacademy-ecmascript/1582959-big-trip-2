@@ -15,6 +15,18 @@ const mockPoints = [
   },
 
   {
+    basePrice: 1255,
+    dateFrom: '12/12/25 16:00',
+    dateTo: '12/12/25 16:43',
+    destination: 11,
+    isFavorite: false,
+    offers: [
+      'bus-1'
+    ],
+    type: 'bus'
+  },
+
+  {
     basePrice: 2000,
     dateFrom: '01/01/19 10:00',
     dateTo: '01/01/19 13:00',
