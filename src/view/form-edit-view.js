@@ -133,16 +133,16 @@ export default class FormEditView extends AbstractStatefulView {
   #datepickerTo = null;
   #handleFormSubmit = null;
   #handleRollupButtonClick = null;
-  #handleResetButtonClick = null;
+  #handleDeleteButtonClick = null;
 
-  constructor({ point, destination, offers, onFormSubmit, onRollupButtonClick, onResetButtonClick }) {
+  constructor({ point, destination, offers, onFormSubmit, onRollupButtonClick, onDeleteButtonClick }) {
     super();
     this.#point = point;
     this.#destination = destination;
     this.#offersPoint = offers;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleRollupButtonClick = onRollupButtonClick;
-    this.#handleResetButtonClick = onResetButtonClick;
+    this.#handleDeleteButtonClick = onDeleteButtonClick;
     this._setState(FormEditView.parsePointToState(this.#point, this.#offersPoint.offers, this.#destination));
     this._restoreHandlers();
   }
@@ -159,7 +159,7 @@ export default class FormEditView extends AbstractStatefulView {
       .addEventListener('click', this.#onEventRollupButtonClick);
 
     this.element.querySelector('.event__reset-btn')
-      .addEventListener('click', this.#onEventResetButtonClick);
+      .addEventListener('click', this.#onFormDeleteButtonClick);
 
     this.element.querySelector('.event__type-group')
       .addEventListener('change', this.#onTypeChange);
@@ -184,9 +184,9 @@ export default class FormEditView extends AbstractStatefulView {
     this.#handleRollupButtonClick();
   };
 
-  #onEventResetButtonClick = (evt) => {
+  #onFormDeleteButtonClick = (evt) => {
     evt.preventDefault();
-    this.#handleResetButtonClick();
+    this.#handleDeleteButtonClick(FormEditView.parseStateToPoint(this._state));
   };
 
   #onTypeChange = (evt) => {

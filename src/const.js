@@ -59,5 +59,16 @@ const Mode = {
   EDITING: 'EDITING',
 };
 
+const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT',
+};
 
-export { DESCRIPTIONS, DESTINATIONS, DateFormat, POINT_TYPES, FilterType, Mode, SortType };
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
+export { DESCRIPTIONS, DESTINATIONS, DateFormat, POINT_TYPES, FilterType, Mode, SortType, UserAction, UpdateType };
