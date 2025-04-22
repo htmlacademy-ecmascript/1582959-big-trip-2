@@ -71,4 +71,9 @@ const UpdateType = {
   MAJOR: 'MAJOR',
 };
 
-export { DESCRIPTIONS, DESTINATIONS, DateFormat, POINT_TYPES, FilterType, Mode, SortType, UserAction, UpdateType };
+const EditMode = {
+  ADD: 'ADD',
+  EDIT: 'EDIT'
+};
+
+export { DESCRIPTIONS, DESTINATIONS, DateFormat, POINT_TYPES, FilterType, Mode, SortType, UserAction, UpdateType, EditMode };

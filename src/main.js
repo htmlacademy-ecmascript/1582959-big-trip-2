@@ -1,6 +1,6 @@
 import { render, RenderPosition } from './framework/render.js';
 import InfoTripView from './view/info-trip-view.js';
-import NewPointView from './view/new-point-view.js';
+import NewPointButtonView from './view/new-point-button-view.js';
 import MainPresenter from './presenter/main-presenter.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import PointsModel from './model/points-model.js';
@@ -31,18 +31,20 @@ const filterPresenter = new FilterPresenter({
   pointsModel
 });
 
-const newPointComponent = new NewPointView({
-  onClick: handleNewEventButtonClick
+const newPointButtonComponent = new NewPointButtonView({
+  onClick: handleNewPointButtonClick,
 });
 
 function handleNewPointFormClose() {
-  newPointComponent.element.disabled = false;
+  newPointButtonComponent.element.disabled = false;
 }
 
-function handleNewEventButtonClick() {
+function handleNewPointButtonClick() {
   mainPresenter.createPoint();
-  newPointComponent.element.disabled = true;
+  newPointButtonComponent.element.disabled = true;
 }
+
+render(newPointButtonComponent, tripMainContainer);
 
 render(new InfoTripView(), tripMainContainer, RenderPosition.AFTERBEGIN);
 

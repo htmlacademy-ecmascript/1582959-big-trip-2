@@ -1,9 +1,10 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { convertDate } from '../utils/main.js';
 import { capitalizeFirstLetter } from '../utils/common.js';
-import { POINT_TYPES, DateFormat } from '../const.js';
+import { POINT_TYPES, DateFormat, EditMode } from '../const.js';
 import { mockOffers } from '../mock/offers.js';
 import { mockDestinations } from '../mock/destinations.js';
+import he from 'he';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
@@ -53,8 +54,19 @@ function createDestinationTemplate(destination) {
   return '';
 }
 
-function createEventTemplate(point) {
-  const { basePrice, dateFrom, dateTo, type, offers, offersPoint, destination } = point;
+function createButtonNegativeTemplate(editMode, isDisabled, isDeleting) {
+  return (
+    editMode === EditMode.ADD
+      ? `<button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>Cancel</button>`
+      : `<button class="event__reset-btn" type="reset">${isDeleting ? 'Deleting...' : 'Delete'}</button>
+        <button class="event__rollup-btn" type="button">
+          <span class="visually-hidden">Open event</span>
+        </button>`
+  );
+}
+
+function createEventTemplate(point, editMode) {
+  const { basePrice, dateFrom, dateTo, type, offers, offersPoint, destination, isDisabled, isDeleting } = point;
   const dateStart = convertDate(dateFrom, DateFormat.DAY_TIME);
   const dateEnd = convertDate(dateTo, DateFormat.DAY_TIME);
   return `
@@ -81,7 +93,7 @@ function createEventTemplate(point) {
           <label class="event__label  event__type-output" for="event-destination-1">
               ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(destination.name)}" list="destination-list-1">
           <datalist id="destination-list-1">
               <option value="Amsterdam"></option>
               <option value="Geneva"></option>
@@ -102,14 +114,11 @@ function createEventTemplate(point) {
               <span class="visually-hidden">Price</span>
               &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
+          <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${basePrice}">
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">Delete</button>
-          <button class="event__rollup-btn" type="button">
-            <span class="visually-hidden">Open event</span>
-          </button>
+          ${createButtonNegativeTemplate(editMode, isDisabled, isDeleting)}
       </header>
       <section class="event__details">
       <section class="event__section  event__section--offers">
@@ -129,37 +138,50 @@ export default class FormEditView extends AbstractStatefulView {
   #point = null;
   #destination = null;
   #offersPoint = null;
+  #editMode = null;
   #datepickerFrom = null;
   #datepickerTo = null;
   #handleFormSubmit = null;
   #handleRollupButtonClick = null;
   #handleDeleteButtonClick = null;
+  #handleCancelButtonClick = null;
 
-  constructor({ point, destination, offers, onFormSubmit, onRollupButtonClick, onDeleteButtonClick }) {
+  constructor({ point, destination, offers, editMode, onFormSubmit, onRollupButtonClick, onDeleteButtonClick, onCancelButtonClick }) {
     super();
     this.#point = point;
     this.#destination = destination;
     this.#offersPoint = offers;
+    this.#editMode = editMode;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleRollupButtonClick = onRollupButtonClick;
     this.#handleDeleteButtonClick = onDeleteButtonClick;
+    this.#handleCancelButtonClick = onCancelButtonClick;
+
     this._setState(FormEditView.parsePointToState(this.#point, this.#offersPoint.offers, this.#destination));
     this._restoreHandlers();
   }
 
   get template() {
-    return createEventTemplate(this._state);
+    return createEventTemplate(this._state, this.#editMode);
   }
 
   _restoreHandlers() {
     this.element.querySelector('.event--edit')
       .addEventListener('submit', this.#onFormSubmit);
 
-    this.element.querySelector('.event__rollup-btn')
-      .addEventListener('click', this.#onEventRollupButtonClick);
+    if (this.#editMode === EditMode.ADD) {
+      this.element
+        .querySelector('.event__reset-btn')
+        .addEventListener('click', this.#onFormCancelButtonClick);
+    }
 
-    this.element.querySelector('.event__reset-btn')
-      .addEventListener('click', this.#onFormDeleteButtonClick);
+    if (this.#editMode === EditMode.EDIT) {
+      this.element.querySelector('.event__reset-btn')
+        .addEventListener('click', this.#onFormDeleteButtonClick);
+
+      this.element.querySelector('.event__rollup-btn')
+        .addEventListener('click', this.#onEventRollupButtonClick);
+    }
 
     this.element.querySelector('.event__type-group')
       .addEventListener('change', this.#onTypeChange);
@@ -189,6 +211,11 @@ export default class FormEditView extends AbstractStatefulView {
     this.#handleDeleteButtonClick(FormEditView.parseStateToPoint(this._state));
   };
 
+  #onFormCancelButtonClick = (evt) => {
+    evt.preventDefault();
+    this.#handleCancelButtonClick();
+  };
+
   #onTypeChange = (evt) => {
     evt.preventDefault();
     const typedOffers = mockOffers.find((offer) => offer.type === evt.target.value);
@@ -210,7 +237,7 @@ export default class FormEditView extends AbstractStatefulView {
     });
   };
 
-  static parsePointToState = (point, offersPoint, destination) => ({ ...point, offersPoint, destination });
+  static parsePointToState = (point, offersPoint, destination) => ({ ...point, offersPoint, destination, isDisabled: false, isDeleting: false });
 
   static parseStateToPoint = (state) => ({ ...state });
 

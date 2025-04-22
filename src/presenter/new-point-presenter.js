@@ -1,51 +1,46 @@
-import { remove, render, RenderPosition } from '../framework/render.js';
 import FormEditView from '../view/form-edit-view.js';
+import { EditMode, UserAction, UpdateType } from '../const.js';
+import { RenderPosition, render, remove } from '../framework/render.js';
 import { nanoid } from 'nanoid';
-import { UserAction, UpdateType } from '../const.js';
 
 export default class NewPointPresenter {
+
   #eventListContainer = null;
+  #formEditListComponent = null;
+
   #handleDataChange = null;
   #handleDestroy = null;
-  #offers = null;
-  #destination = null;
 
-  #addEventComponent = null;
-
-  constructor({ eventListContainer, onDataChange, onDestroy, offers, destination }) {
+  constructor({ eventListContainer, onDataChange, onDestroy }) {
     this.#eventListContainer = eventListContainer;
     this.#handleDataChange = onDataChange;
     this.#handleDestroy = onDestroy;
-    this.#offers = offers;
-    this.#destination = destination;
   }
 
   init() {
-    if (this.#addEventComponent !== null) {
+    if (this.#formEditListComponent !== null) {
       return;
     }
 
-    this.#addEventComponent = new FormEditView({
-      offers: this.#offers,
-      destinations: this.#destination,
+    this.#formEditListComponent = new FormEditView({
+      editMode: EditMode.ADD,
       onFormSubmit: this.#handleFormSubmit,
-      onDeleteButtonClick: this.#handleDeleteButtonClick
+      onCancelButtonClick: this.#handleCancelButtonClick,
     });
 
-    render(this.#addEventComponent, this.#eventListContainer, RenderPosition.AFTERBEGIN);
-
+    render(this.#formEditListComponent, this.#eventListContainer, RenderPosition.AFTERBEGIN);
     document.addEventListener('keydown', this.#onEscapeKeydown);
   }
 
   destroy() {
-    if (this.#addEventComponent === null) {
+    if (this.#formEditListComponent === null) {
       return;
     }
 
     this.#handleDestroy();
 
-    remove(this.#addEventComponent);
-    this.#addEventComponent = null;
+    remove(this.#formEditListComponent);
+    this.#formEditListComponent = null;
 
     document.removeEventListener('keydown', this.#onEscapeKeydown);
   }
@@ -59,7 +54,7 @@ export default class NewPointPresenter {
     this.destroy();
   };
 
-  #handleDeleteButtonClick = () => {
+  #handleCancelButtonClick = () => {
     this.destroy();
   };
 

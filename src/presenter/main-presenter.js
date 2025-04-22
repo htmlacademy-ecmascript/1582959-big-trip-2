@@ -1,13 +1,12 @@
 import EventListView from '../view/event-list-view.js';
 import SortView from '../view/sort-view.js';
 import NoPointView from '../view/no-point-view.js';
-import NewPointPresenter from './new-point-presenter.js';
 import PointPresenter from './point-presenter.js';
+import NewPointPresenter from './new-point-presenter.js';
 import { filter } from '../utils/filter.js';
 import { render, RenderPosition, remove } from '../framework/render.js';
 import { sortByDay, sortByPrice, sortByTime } from '../utils/main.js';
 import { SortType, UserAction, UpdateType, FilterType } from '../const.js';
-// import { locale } from 'dayjs';
 
 export default class MainPresenter {
   #container = null;
@@ -34,9 +33,7 @@ export default class MainPresenter {
     this.#filterModel = filterModel;
 
     this.#newPointPresenter = new NewPointPresenter({
-      taskListContainer: this.#eventListComponent.element,
-      offersPoint: this.#offersModel.offers,
-      destinations: this.#destinationsModel.destinations,
+      eventListContainer: this.#eventListComponent.element,
       onDataChange: this.#handleViewAction,
       onDestroy: onNewPointDestroy
     });
@@ -154,11 +151,11 @@ export default class MainPresenter {
   }
 
   #clearComponent({ resetSortType = false } = {}) {
+    this.#newPointPresenter.destroy();
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
 
     remove(this.#sortComponent);
-    this.#newPointPresenter.destroy();
 
     if (this.#noPointComponent) {
       remove(this.#noPointComponent);
