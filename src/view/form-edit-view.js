@@ -26,7 +26,7 @@ function createOffersTemplate(offers, offersPoint = []) {
     return ` <h3 class="event__section-title  event__section-title--offers">Offers</h3>
         <div class="event__available-offers">
           ${offersPoint.map(({ title, price, id }) => (
-    `<div class="event__offer-selector">
+      `<div class="event__offer-selector">
           <input class="event__offer-checkbox visually-hidden" id="${id}" type="checkbox" name="${title}" ${offers.includes(id) ? 'checked' : ''}>
           <label class="event__offer-label" for="${id}">
             <span class="event__offer-title">${title}</span>
@@ -65,8 +65,8 @@ function createButtonNegativeTemplate(editMode, isDisabled, isDeleting) {
   );
 }
 
-function createEventTemplate(point, editMode) {
-  const { basePrice, dateFrom, dateTo, type, offers, offersPoint, destination, isDisabled, isDeleting } = point;
+function createEventTemplate({ editMode, basePrice, dateFrom, dateTo, type, offers, offersPoint, destination, isDisabled, isDeleting }) {
+  // const { basePrice, dateFrom, dateTo, type, offers, offersPoint, destination, isDisabled, isDeleting } = point;
   const dateStart = convertDate(dateFrom, DateFormat.DAY_TIME);
   const dateEnd = convertDate(dateTo, DateFormat.DAY_TIME);
   return `

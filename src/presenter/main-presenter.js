@@ -63,10 +63,10 @@ export default class MainPresenter {
     this.#renderComponent();
   }
 
-  createPoint() {
+  createPoint(point, offers, destination) {
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this.#newPointPresenter.init();
+    this.#newPointPresenter.init({ point, offers, destination });
   }
 
   #handleModeChange = () => {
@@ -88,11 +88,11 @@ export default class MainPresenter {
     }
   };
 
-  #handleModelEvent = (updateType, data) => {
+  #handleModelEvent = (updateType, point, offers, destination) => {
     switch (updateType) {
       case UpdateType.PATCH:
         // Почему не работает эта реализация?
-        this.#pointPresenters.get(data.id).init(data);
+        this.#pointPresenters.get(point.id).init({ point, offers, destination });
         break;
       case UpdateType.MINOR:
         this.#clearComponent();

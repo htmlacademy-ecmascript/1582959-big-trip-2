@@ -7,6 +7,9 @@ export default class NewPointPresenter {
 
   #eventListContainer = null;
   #formEditListComponent = null;
+  #point = null;
+  #offers = null;
+  #destination = null;
 
   #handleDataChange = null;
   #handleDestroy = null;
@@ -17,12 +20,18 @@ export default class NewPointPresenter {
     this.#handleDestroy = onDestroy;
   }
 
-  init() {
+  init({ point, offers, destination }) {
+    this.#point = point;
+    this.#offers = offers;
+    this.#destination = destination;
     if (this.#formEditListComponent !== null) {
       return;
     }
 
     this.#formEditListComponent = new FormEditView({
+      point: this.#point,
+      offers: this.#offers,
+      destination: this.#destination,
       editMode: EditMode.ADD,
       onFormSubmit: this.#handleFormSubmit,
       onCancelButtonClick: this.#handleCancelButtonClick,

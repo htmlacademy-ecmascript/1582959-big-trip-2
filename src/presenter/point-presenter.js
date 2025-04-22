@@ -23,7 +23,6 @@ export default class PointPresenter {
   }
 
   init({ point, offers, destination }) {
-
     this.#point = point;
     this.#offers = offers;
     this.#destination = destination;
@@ -116,14 +115,14 @@ export default class PointPresenter {
     );
   };
 
-  #handleFormSubmit = (update) => {
-    const isMinorUpdate = !isDatesEqual(this.#point.dueDate, update.dueDate)
-      || this.#point.basePrice !== update.basePrice;
+  #handleFormSubmit = (point) => {
+    const isMinorUpdate = !isDatesEqual(this.#point.dueDate, point.dueDate);
 
     this.#handleDataChange(
       UserAction.UPDATE_POINT,
       isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
-      update
+      // UpdateType.MINOR,
+      point
     );
     this.#replaceFormEditToPoint();
   };
