@@ -1,13 +1,12 @@
-import FormEditView from '../view/form-edit-view.js';
-import { EditMode, UserAction, UpdateType } from '../const.js';
+import AddFormView from '../view/add-form-view.js';
+import { UserAction, UpdateType } from '../const.js';
 import { RenderPosition, render, remove } from '../framework/render.js';
 import { nanoid } from 'nanoid';
 
 export default class NewPointPresenter {
 
   #eventListContainer = null;
-  #formEditListComponent = null;
-  #point = null;
+  #addPointFormComponent = null;
   #offers = null;
   #destination = null;
 
@@ -20,36 +19,34 @@ export default class NewPointPresenter {
     this.#handleDestroy = onDestroy;
   }
 
-  init({ point, offers, destination }) {
-    this.#point = point;
+  init({ offers, destination }) {
     this.#offers = offers;
     this.#destination = destination;
-    if (this.#formEditListComponent !== null) {
+
+    if (this.#addPointFormComponent !== null) {
       return;
     }
 
-    this.#formEditListComponent = new FormEditView({
-      point: this.#point,
+    this.#addPointFormComponent = new AddFormView({
       offers: this.#offers,
       destination: this.#destination,
-      editMode: EditMode.ADD,
       onFormSubmit: this.#handleFormSubmit,
       onCancelButtonClick: this.#handleCancelButtonClick,
     });
 
-    render(this.#formEditListComponent, this.#eventListContainer, RenderPosition.AFTERBEGIN);
+    render(this.#addPointFormComponent, this.#eventListContainer, RenderPosition.AFTERBEGIN);
     document.addEventListener('keydown', this.#onEscapeKeydown);
   }
 
   destroy() {
-    if (this.#formEditListComponent === null) {
+    if (this.#addPointFormComponent === null) {
       return;
     }
 
     this.#handleDestroy();
 
-    remove(this.#formEditListComponent);
-    this.#formEditListComponent = null;
+    remove(this.#addPointFormComponent);
+    this.#addPointFormComponent = null;
 
     document.removeEventListener('keydown', this.#onEscapeKeydown);
   }

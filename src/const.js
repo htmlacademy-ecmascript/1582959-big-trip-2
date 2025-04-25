@@ -1,3 +1,5 @@
+const DEFAULT_PRICE = 0;
+
 const POINT_TYPES = [
   'taxi',
   'bus',
@@ -71,9 +73,15 @@ const UpdateType = {
   MAJOR: 'MAJOR',
 };
 
-const EditMode = {
-  ADD: 'ADD',
-  EDIT: 'EDIT'
+const BLANK_POINT = {
+  basePrice: DEFAULT_PRICE,
+  dateFrom: null,
+  dateTo: null,
+  isFavorite: false,
+  offers: [],
+  destination: null,
+  type: 'flight',
+  name: ''
 };
 
-export { DESCRIPTIONS, DESTINATIONS, DateFormat, POINT_TYPES, FilterType, Mode, SortType, UserAction, UpdateType, EditMode };
+export { DESCRIPTIONS, DESTINATIONS, DateFormat, POINT_TYPES, FilterType, Mode, SortType, UserAction, UpdateType, BLANK_POINT };

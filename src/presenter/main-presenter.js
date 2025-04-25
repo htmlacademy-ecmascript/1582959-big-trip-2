@@ -1,6 +1,7 @@
 import EventListView from '../view/event-list-view.js';
 import SortView from '../view/sort-view.js';
 import NoPointView from '../view/no-point-view.js';
+import LoadingView from '../view/loading-view.js';
 import PointPresenter from './point-presenter.js';
 import NewPointPresenter from './new-point-presenter.js';
 import { filter } from '../utils/filter.js';
@@ -22,6 +23,8 @@ export default class MainPresenter {
 
   #sortComponent = null;
   #eventListComponent = new EventListView();
+  #loadingComponent = new LoadingView();
+  #isLoading = false;
   #noPointComponent = null;
   #filterType = FilterType.EVERYTHING;
 
@@ -33,6 +36,8 @@ export default class MainPresenter {
     this.#filterModel = filterModel;
 
     this.#newPointPresenter = new NewPointPresenter({
+      // offersModel: this.#offersModel,
+      // destinationsModel: this.#destinationsModel,
       eventListContainer: this.#eventListComponent.element,
       onDataChange: this.#handleViewAction,
       onDestroy: onNewPointDestroy
@@ -63,15 +68,15 @@ export default class MainPresenter {
     this.#renderComponent();
   }
 
-  createPoint(point, offers, destination) {
+  createPoint(offers, destination) {
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this.#newPointPresenter.init({ point, offers, destination });
+    this.#newPointPresenter.init({ offers, destination });
   }
 
   #handleModeChange = () => {
-    this.#newPointPresenter.destroy();
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
+    this.#newPointPresenter.destroy();
   };
 
   #handleViewAction = (actionType, updateType, update) => {
@@ -88,11 +93,16 @@ export default class MainPresenter {
     }
   };
 
-  #handleModelEvent = (updateType, point, offers, destination) => {
+  #handleModelEvent = (updateType, point) => {
+
     switch (updateType) {
       case UpdateType.PATCH:
-        // Почему не работает эта реализация?
-        this.#pointPresenters.get(point.id).init({ point, offers, destination });
+        this.#pointPresenters.get(point.id)
+          .init({
+            point,
+            offers: this.#offersModel.getOffersByType(point.type),
+            destination: this.#destinationsModel.getDestinationById(point.destination)
+          });
         break;
       case UpdateType.MINOR:
         this.#clearComponent();
@@ -150,12 +160,17 @@ export default class MainPresenter {
     render(this.#noPointComponent, this.#eventListComponent.element);
   }
 
+  #renderLoading() {
+    render(this.#loadingComponent, this.#container);
+  }
+
   #clearComponent({ resetSortType = false } = {}) {
     this.#newPointPresenter.destroy();
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
 
     remove(this.#sortComponent);
+    remove(this.#loadingComponent);
 
     if (this.#noPointComponent) {
       remove(this.#noPointComponent);
@@ -168,6 +183,11 @@ export default class MainPresenter {
 
   #renderComponent() {
     render(this.#eventListComponent, this.#container);
+
+    if(this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
 
     if (this.points.length === 0) {
       this.#renderNoPoint();

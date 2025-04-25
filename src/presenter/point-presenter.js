@@ -1,7 +1,7 @@
 import FormEditView from '../view/form-edit-view.js';
 import PointView from '../view/point-view.js';
 import { render, replace, remove } from '../framework/render.js';
-import { Mode, UserAction, UpdateType, EditMode } from '../const.js';
+import { Mode, UserAction, UpdateType } from '../const.js';
 import { isDatesEqual } from '../utils/main.js';
 
 export default class PointPresenter {
@@ -42,7 +42,6 @@ export default class PointPresenter {
       point: this.#point,
       offers: this.#offers,
       destination: this.#destination,
-      editMode: EditMode.EDIT,
       onFormSubmit: this.#handleFormSubmit,
       onRollupButtonClick: this.#handleRollupButtonClick,
       onDeleteButtonClick: this.#handleDeleteButtonClick,
@@ -121,7 +120,6 @@ export default class PointPresenter {
     this.#handleDataChange(
       UserAction.UPDATE_POINT,
       isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
-      // UpdateType.MINOR,
       point
     );
     this.#replaceFormEditToPoint();
@@ -130,7 +128,7 @@ export default class PointPresenter {
   #handleFavoriteButtonClick = () => {
     this.#handleDataChange(
       UserAction.UPDATE_POINT,
-      UpdateType.MINOR,
+      UpdateType.PATCH,
       { ...this.#point, isFavorite: !this.#point.isFavorite }
     );
   };
