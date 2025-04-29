@@ -26,7 +26,7 @@ function createOffersTemplate(offers, offersPoint = []) {
     return ` <h3 class="event__section-title  event__section-title--offers">Offers</h3>
         <div class="event__available-offers">
           ${offersPoint.map(({ title, price, id }) => (
-      `<div class="event__offer-selector">
+    `<div class="event__offer-selector">
           <input class="event__offer-checkbox visually-hidden" id="${id}" type="checkbox" name="${title}" ${offers.includes(id) ? 'checked' : ''}>
           <label class="event__offer-label" for="${id}">
             <span class="event__offer-title">${title}</span>
