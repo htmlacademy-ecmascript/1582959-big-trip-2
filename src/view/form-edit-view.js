@@ -26,7 +26,7 @@ function createOffersTemplate(offers, offersPoint = []) {
     return ` <h3 class="event__section-title  event__section-title--offers">Offers</h3>
         <div class="event__available-offers">
           ${offersPoint.map(({ title, price, id }) => (
-    `<div class="event__offer-selector">
+      `<div class="event__offer-selector">
           <input class="event__offer-checkbox visually-hidden" id="${id}" type="checkbox" name="${title}" ${offers.includes(id) ? 'checked' : ''}>
           <label class="event__offer-label" for="${id}">
             <span class="event__offer-title">${title}</span>
@@ -38,8 +38,6 @@ function createOffersTemplate(offers, offersPoint = []) {
   }
   return '';
 }
-
-// const createDestinationListTemplate =(destination)=> destination.map(({name}) => `<option value="${name}"></option>`).join('');
 
 function createDestinationTemplate(destination) {
 
@@ -90,6 +88,8 @@ function createEventTemplate({ basePrice, dateFrom, dateTo, type, offers, offers
               <option value="Amsterdam"></option>
               <option value="Geneva"></option>
               <option value="Chamonix"></option>
+              <option value="London"></option>
+              <option value="Moscow"></option>
           </datalist>
           </div>
 
@@ -187,8 +187,6 @@ export default class FormEditView extends AbstractStatefulView {
         ...this._state,
         destination: this._state.destination.id
       }));
-    } else {
-      this._state.dateTo = this._state.dateFrom;
     }
   };
 

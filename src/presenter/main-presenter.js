@@ -36,8 +36,8 @@ export default class MainPresenter {
     this.#filterModel = filterModel;
 
     this.#newPointPresenter = new NewPointPresenter({
-      // offersModel: this.#offersModel,
-      // destinationsModel: this.#destinationsModel,
+      offersModel: this.#offersModel,
+      destinationsModel: this.#destinationsModel,
       eventListContainer: this.#eventListComponent.element,
       onDataChange: this.#handleViewAction,
       onDestroy: onNewPointDestroy
@@ -68,10 +68,10 @@ export default class MainPresenter {
     this.#renderComponent();
   }
 
-  createPoint(offers, destination) {
+  createPoint(destination) {
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this.#newPointPresenter.init({ offers, destination });
+    this.#newPointPresenter.init({ destination });
   }
 
   #handleModeChange = () => {

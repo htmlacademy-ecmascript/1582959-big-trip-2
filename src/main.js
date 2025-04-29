@@ -40,7 +40,7 @@ function handleNewPointFormClose() {
 }
 
 function handleNewPointButtonClick() {
-  mainPresenter.createPoint(offersModel.offers, destinationsModel.destinations);
+  mainPresenter.createPoint(destinationsModel.destinations);
   newPointButtonComponent.element.disabled = true;
 }
 

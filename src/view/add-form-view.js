@@ -25,7 +25,7 @@ function createOffersTemplate(offers, offersPoint = []) {
     return ` <h3 class="event__section-title  event__section-title--offers">Offers</h3>
         <div class="event__available-offers">
           ${offersPoint.map(({ title, price, id }) => (
-    `<div class="event__offer-selector">
+      `<div class="event__offer-selector">
           <input class="event__offer-checkbox visually-hidden" id="${id}" type="checkbox" name="${title}" ${offers.includes(id) ? 'checked' : ''}>
           <label class="event__offer-label" for="${id}">
             <span class="event__offer-title">${title}</span>
@@ -40,12 +40,13 @@ function createOffersTemplate(offers, offersPoint = []) {
 
 // function createDestinationListTemplate(destination) {
 //   const destinationNames = destination.map((destination) => destination.name);
-//   // console.log(destinationNames);
-//   return destinationNames.map((destination) => `<option value="${destination}">${destination}</option>`).join('');
+//   console.log(destinationNames);
+//   console.log(destination);
+//   return destinationNames.map((name) => `<option value="${name}">${name}</option>`).join('');
 // }
 
 function createDestinationTemplate(destination) {
-  if (!destination || !destination.name) {
+  if (!destination || !destination.name || destination.pictures.length === 0) {
     return '';
   }
 
@@ -56,8 +57,8 @@ function createDestinationTemplate(destination) {
       `<img class="event__photo" src="${picture.src}" alt="${picture.description}"/>`
     ).join('');
   }
-
-  return `
+  if (destination.pictures.length !== 0) {
+    return `
     <h3 class="event__section-title event__section-title--destination">Destination</h3>
     <p class="event__destination-description">${destination.description}</p>
     <div class="event__photos-container">
@@ -66,6 +67,7 @@ function createDestinationTemplate(destination) {
       </div>
     </div>
   `;
+  }
 }
 
 function createAddPointTemplate({ basePrice, dateFrom, dateTo, type, offers, offersPoint, destination, isDisabled, isSaving }) {
@@ -96,11 +98,13 @@ function createAddPointTemplate({ basePrice, dateFrom, dateTo, type, offers, off
           <label class="event__label  event__type-output" for="event-destination-1">
               ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name || ''}" list="destination-list-1" required>
           <datalist id="destination-list-1">
               <option value="Amsterdam"></option>
               <option value="Geneva"></option>
               <option value="Chamonix"></option>
+              <option value="London"></option>
+              <option value="Moscow"></option>
           </datalist>
           </div>
 
@@ -135,8 +139,6 @@ function createAddPointTemplate({ basePrice, dateFrom, dateTo, type, offers, off
   </li>
 `;
 }
-// ${createDestinationTemplate(destination)}
-// ${destination.pictures.length !== 0 ? createDestinationTemplate(destination) : ''}
 
 export default class AddFormView extends AbstractStatefulView {
   #point = null;
@@ -188,7 +190,7 @@ export default class AddFormView extends AbstractStatefulView {
 
   #onFormSubmit = (evt) => {
     evt.preventDefault();
-    if (this._state.dateFrom === null) {
+    if (this._state.dateFrom === null || this._state.dateTo === null) {
       return;
     }
     if (this._state.dateFrom <= this._state.dateTo) {
@@ -196,8 +198,6 @@ export default class AddFormView extends AbstractStatefulView {
         ...this._state,
         destination: this._state.destination.id
       }));
-    } else {
-      this._state.dateTo = this._state.dateFrom;
     }
   };
 
