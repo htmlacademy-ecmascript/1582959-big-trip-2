@@ -22,7 +22,6 @@ function createEventTypesItemTemplate(pointType) {
 }
 
 function createOffersTemplate(offers, offersPoint = []) {
-
   if (offersPoint.length) {
     return ` <h3 class="event__section-title  event__section-title--offers">Offers</h3>
         <div class="event__available-offers">
@@ -40,6 +39,8 @@ function createOffersTemplate(offers, offersPoint = []) {
   return '';
 }
 
+// const createDestinationListTemplate =(destination)=> destination.map(({name}) => `<option value="${name}"></option>`).join('');
+
 function createDestinationTemplate(destination) {
 
   if (destination) {
@@ -56,7 +57,7 @@ function createDestinationTemplate(destination) {
   return '';
 }
 
-function createEventTemplate({ basePrice, dateFrom, dateTo, type, offers, offersPoint, destination, isDeleting }) {
+function createEventTemplate({ basePrice, dateFrom, dateTo, type, offers, offersPoint, destination, isDeleting, isSaving }) {
   const dateStart = convertDate(dateFrom, DateFormat.DAY_TIME);
   const dateEnd = convertDate(dateTo, DateFormat.DAY_TIME);
 
@@ -105,10 +106,10 @@ function createEventTemplate({ basePrice, dateFrom, dateTo, type, offers, offers
               <span class="visually-hidden">Price</span>
               &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${parseInt(basePrice, 10)}">
+          <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${parseInt(basePrice, 10)}" min="1">
           </div>
 
-          <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+          <button class="event__save-btn  btn  btn--blue" type="submit">${isSaving ? 'Saving...' : 'Save'}</button>
           <button class="event__reset-btn" type="reset">${isDeleting ? 'Deleting...' : 'Delete'}</button>
         <button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>
@@ -148,7 +149,6 @@ export default class FormEditView extends AbstractStatefulView {
 
     this._setState(FormEditView.parsePointToState(this.#point, this.#offersPoint.offers, this.#destination));
     this._restoreHandlers();
-
   }
 
   get template() {
@@ -174,19 +174,22 @@ export default class FormEditView extends AbstractStatefulView {
     this.element.querySelector('.event__input--price')
       .addEventListener('change', this.#onPriceChange);
 
-    // this.element.querySelector('.event__offer-selector')
-    //   .addEventListener('click', this.#onOffersButtonClick);
+    this.element.querySelector('.event__section--offers')
+      .addEventListener('change', this.#onOffersButtonChange);
 
     this.#setDatepicker();
   }
 
   #onFormSubmit = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit(FormEditView.parseStateToPoint({
-      ...this._state,
-      offers: this._state.offersPoint.map((offer) => offer.id),
-      destination: this._state.destination.id
-    }));
+    if (this._state.dateFrom <= this._state.dateTo) {
+      this.#handleFormSubmit(FormEditView.parseStateToPoint({
+        ...this._state,
+        destination: this._state.destination.id
+      }));
+    } else {
+      this._state.dateTo = this._state.dateFrom;
+    }
   };
 
   #onEventRollupButtonClick = (evt) => {
@@ -200,7 +203,9 @@ export default class FormEditView extends AbstractStatefulView {
   };
 
   #onPriceChange = (evt) => {
-    this.updateElement({ basePrice: evt.target.value });
+    this.updateElement({
+      basePrice: evt.target.value,
+    });
   };
 
   #onTypeChange = (evt) => {
@@ -224,11 +229,13 @@ export default class FormEditView extends AbstractStatefulView {
     });
   };
 
-  // #onOffersButtonClick = (evt) => {
-  //   this.updateElement({
-  //     offers: evt.target.value,
-  //   });
-  // };
+  #onOffersButtonChange = () => {
+    const offersChecked = Array.from(this.element.querySelectorAll('.event__offer-checkbox:checked'));
+
+    this.updateElement({
+      offers: offersChecked.map((offer) => offer.id)
+    });
+  };
 
   static parsePointToState = (point, offersPoint, destination) => ({ ...point, offersPoint, destination, isDeleting: false });
 
@@ -270,7 +277,7 @@ export default class FormEditView extends AbstractStatefulView {
       {
         ...basicDateSettings,
         defaultDate: this._state.dateFrom,
-        onChange: this.#onDateFromChange
+        onChange: this.#onDateFromChange,
       }
     );
     this.#datepickerTo = flatpickr(
@@ -278,7 +285,8 @@ export default class FormEditView extends AbstractStatefulView {
       {
         ...basicDateSettings,
         defaultDate: this._state.dateTo,
-        onChange: this.#onDateToChange
+        onChange: this.#onDateToChange,
+        minDate: this._state.dateFrom
       }
     );
   }

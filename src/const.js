@@ -79,6 +79,7 @@ const BLANK_POINT = {
   dateTo: null,
   isFavorite: false,
   offers: [],
+  offersPoint: [],
   destination: null,
   type: 'flight',
   name: ''

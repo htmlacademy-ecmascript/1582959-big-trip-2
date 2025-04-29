@@ -22,13 +22,12 @@ export default class NewPointPresenter {
   init({ offers, destination }) {
     this.#offers = offers;
     this.#destination = destination;
-
     if (this.#addPointFormComponent !== null) {
       return;
     }
 
     this.#addPointFormComponent = new AddFormView({
-      offers: this.#offers,
+      // offers: this.#offers,
       destination: this.#destination,
       onFormSubmit: this.#handleFormSubmit,
       onCancelButtonClick: this.#handleCancelButtonClick,
