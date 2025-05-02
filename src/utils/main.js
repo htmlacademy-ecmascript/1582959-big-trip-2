@@ -65,4 +65,8 @@ function sortByTime(pointA, pointB) {
   return calculateDuration(pointB) - calculateDuration(pointA);
 }
 
-export { convertDate, getEventDuration, isFuturePoint, isPresentPoint, isPastPoint, sortByDay, sortByPrice, sortByTime };
+function isDatesEqual(dateA, dateB) {
+  return (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'D');
+}
+
+export { convertDate, getEventDuration, isFuturePoint, isPresentPoint, isPastPoint, sortByDay, sortByPrice, sortByTime, isDatesEqual };
