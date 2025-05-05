@@ -17,7 +17,7 @@ function createOffersTemplate(offersPoint, offers) {
   return '';
 }
 
-function createPointTemplate(point, destination, offersPoint) {
+function createPointTemplate(point, destinations, offersPoint) {
   const { basePrice, type, dateFrom, dateTo, isFavorite, offers } = point;
 
   const date = convertDate(dateFrom, DateFormat.DAY);
@@ -37,7 +37,7 @@ function createPointTemplate(point, destination, offersPoint) {
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${type} ${destination.name}</h3>
+      <h3 class="event__title">${type} ${destinations.name}</h3>
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime="${dateStart}T${timeStart}">${timeStart}</time>
@@ -70,15 +70,15 @@ function createPointTemplate(point, destination, offersPoint) {
 export default class PointView extends AbstractView {
 
   #point = null;
-  #destination = null;
+  #destinations = null;
   #offersPoint = null;
   #handlePointRollupButtonClick = null;
   #handleFavoriteButtonClick = null;
 
-  constructor({ point, destination, offers, onRollupButtonClick, onFavoriteClick }) {
+  constructor({ point, destinations, offers, onRollupButtonClick, onFavoriteClick }) {
     super();
     this.#point = point;
-    this.#destination = destination;
+    this.#destinations = destinations;
     this.#offersPoint = offers;
     this.#handlePointRollupButtonClick = onRollupButtonClick;
     this.#handleFavoriteButtonClick = onFavoriteClick;
@@ -91,7 +91,7 @@ export default class PointView extends AbstractView {
   }
 
   get template() {
-    return createPointTemplate(this.#point, this.#destination, this.#offersPoint);
+    return createPointTemplate(this.#point, this.#destinations, this.#offersPoint);
   }
 
   #onEventRollupButtonClick = (evt) => {
