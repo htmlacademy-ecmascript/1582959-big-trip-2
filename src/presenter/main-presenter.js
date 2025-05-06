@@ -2,12 +2,19 @@ import EventListView from '../view/event-list-view.js';
 import SortView from '../view/sort-view.js';
 import NoPointView from '../view/no-point-view.js';
 import LoadingView from '../view/loading-view.js';
+import FailedLoadDataView from '../view/failed-load-data-view.js';
 import PointPresenter from './point-presenter.js';
 import NewPointPresenter from './new-point-presenter.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import { filter } from '../utils/filter.js';
 import { render, RenderPosition, remove } from '../framework/render.js';
 import { sortByDay, sortByPrice, sortByTime } from '../utils/main.js';
 import { SortType, UserAction, UpdateType, FilterType } from '../const.js';
+
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
 
 export default class MainPresenter {
   #container = null;
@@ -24,9 +31,16 @@ export default class MainPresenter {
   #sortComponent = null;
   #eventListComponent = new EventListView();
   #loadingComponent = new LoadingView();
-  #isLoading = false;
+  #faildLoadComponent = new FailedLoadDataView();
+  #isLoading = true;
+  #isError = false;
   #noPointComponent = null;
   #filterType = FilterType.EVERYTHING;
+
+  #uiBlocker = new UiBlocker({
+    lowerLimit: TimeLimit.LOWER_LIMIT,
+    upperLimit: TimeLimit.UPPER_LIMIT
+  });
 
   constructor({ container, pointsModel, offersModel, destinationsModel, filterModel, onNewPointDestroy }) {
     this.#container = container;
@@ -34,6 +48,7 @@ export default class MainPresenter {
     this.#offersModel = offersModel;
     this.#destinationsModel = destinationsModel;
     this.#filterModel = filterModel;
+    // console.log(this.#destinationsModel);
 
     this.#newPointPresenter = new NewPointPresenter({
       offersModel: this.#offersModel,
@@ -68,10 +83,12 @@ export default class MainPresenter {
     this.#renderComponent();
   }
 
-  createPoint(destination) {
+  createPoint(destinations, offers) {
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this.#newPointPresenter.init({ destination });
+    this.#newPointPresenter.init({ destinations, offers });
+    // console.log(destinations);
+
   }
 
   #handleModeChange = () => {
@@ -79,18 +96,35 @@ export default class MainPresenter {
     this.#newPointPresenter.destroy();
   };
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this.#pointsModel.updatePoint(updateType, update);
+        this.#pointPresenters.get(update.id).setSaving();
+        try {
+          await this.#pointsModel.updatePoint(updateType, update);
+        } catch (err) {
+          this.#pointPresenters.get(update.id).setAborting();
+        }
         break;
       case UserAction.ADD_POINT:
-        this.#pointsModel.addPoint(updateType, update);
+        this.#newPointPresenter.setSaving();
+        try {
+          await this.#pointsModel.addPoint(updateType, update);
+        } catch (err) {
+          this.#newPointPresenter.setAborting();
+        }
         break;
       case UserAction.DELETE_POINT:
-        this.#pointsModel.deletePoint(updateType, update);
+        this.#pointPresenters.get(update.id).setDeleting();
+        try {
+          await this.#pointsModel.deletePoint(updateType, update);
+        } catch (err) {
+          this.#pointPresenters.get(update.id).setAborting();
+        }
         break;
     }
+    this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (updateType, point) => {
@@ -101,7 +135,7 @@ export default class MainPresenter {
           .init({
             point,
             offers: this.#offersModel.getOffersByType(point.type),
-            destination: this.#destinationsModel.getDestinationById(point.destination)
+            destinations: this.#destinationsModel.getDestinationById(point.destination)
           });
         break;
       case UpdateType.MINOR:
@@ -110,6 +144,18 @@ export default class MainPresenter {
         break;
       case UpdateType.MAJOR:
         this.#clearComponent({ resetSortType: true });
+        this.#renderComponent();
+        break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        remove(this.#faildLoadComponent);
+        this.#renderComponent();
+        break;
+      case UpdateType.ERROR:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#isError = true;
         this.#renderComponent();
         break;
     }
@@ -133,14 +179,16 @@ export default class MainPresenter {
     render(this.#sortComponent, this.#container, RenderPosition.AFTERBEGIN);
   }
 
-  #renderPoint(point, offers, destination) {
+  #renderPoint(point, offers, destinations) {
     const pointPresenter = new PointPresenter({
+      offersModel: this.#offersModel,
+      destinationsModel: this.#destinationsModel,
       eventListContainer: this.#eventListComponent.element,
       onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange
     });
 
-    pointPresenter.init({ point, offers, destination });
+    pointPresenter.init({ point, offers, destinations });
     this.#pointPresenters.set(point.id, pointPresenter);
   }
 
@@ -164,6 +212,10 @@ export default class MainPresenter {
     render(this.#loadingComponent, this.#container);
   }
 
+  #renderFaildLoad() {
+    render(this.#faildLoadComponent, this.#container);
+  }
+
   #clearComponent({ resetSortType = false } = {}) {
     this.#newPointPresenter.destroy();
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
@@ -171,6 +223,7 @@ export default class MainPresenter {
 
     remove(this.#sortComponent);
     remove(this.#loadingComponent);
+    remove(this.#faildLoadComponent);
 
     if (this.#noPointComponent) {
       remove(this.#noPointComponent);
@@ -184,8 +237,13 @@ export default class MainPresenter {
   #renderComponent() {
     render(this.#eventListComponent, this.#container);
 
-    if(this.#isLoading) {
+    if (this.#isLoading) {
       this.#renderLoading();
+      return;
+    }
+
+    if (this.#isError) {
+      this.#renderFaildLoad();
       return;
     }
 

@@ -2,9 +2,7 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { convertDate } from '../utils/main.js';
 import { capitalizeFirstLetter } from '../utils/common.js';
 import { POINT_TYPES, DateFormat } from '../const.js';
-import { mockOffers } from '../mock/offers.js';
-import { mockDestinations } from '../mock/destinations.js';
-import he from 'he';
+// import he from 'he';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
@@ -39,15 +37,21 @@ function createOffersTemplate(offers, offersPoint = []) {
   return '';
 }
 
-function createDestinationTemplate(destination) {
+// function createDestinationListTemplate(allDestinations) {
+//   const destinationNames = allDestinations.map((destination) => destination.name);
 
-  if (destination) {
+//   return destinationNames.map((name) => `<option value="${name}">${name}</option>`).join('');
+// }
+
+function createDestinationTemplate(destinations) {
+
+  if (destinations) {
     return (
       `<h3 class="event__section-title  event__section-title--destination">Destination</h3>
-      <p class="event__destination-description">${destination.description}</p>
+      <p class="event__destination-description">${destinations.description}</p>
       <div class="event__photos-container">
             <div class="event__photos-tape">
-            ${destination.pictures.map(({ src, description }) => `<img class="event__photo" src="${src}" alt="${description}"></img>`).join('')}
+            ${destinations.pictures.map(({ src, description }) => `<img class="event__photo" src="${src}" alt="${description}"></img>`).join('')}
             </div>
           </div>`
     );
@@ -55,10 +59,12 @@ function createDestinationTemplate(destination) {
   return '';
 }
 
-function createEventTemplate({ basePrice, dateFrom, dateTo, type, offers, offersPoint, destination, isDeleting, isSaving }) {
+function createEventTemplate({ basePrice, dateFrom, dateTo, type, offers, destinations, offersPoint, isDeleting, isSaving, isDisabled }) {
   const dateStart = convertDate(dateFrom, DateFormat.DAY_TIME);
   const dateEnd = convertDate(dateTo, DateFormat.DAY_TIME);
-
+  // console.log(destinations);
+  // console.log(allDestinations);
+  //  ${createDestinationListTemplate(allDestinations)}
   return `
   <li class="trip-events__item">
       <form class="event event--edit" action="#" method="post">
@@ -68,7 +74,7 @@ function createEventTemplate({ basePrice, dateFrom, dateTo, type, offers, offers
               <span class="visually-hidden">Choose event type</span>
               <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
           </label>
-          <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+          <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox" ${isDisabled ? 'disabled' : ''}>
 
           <div class="event__type-list">
               <fieldset class="event__type-group">
@@ -83,22 +89,18 @@ function createEventTemplate({ basePrice, dateFrom, dateTo, type, offers, offers
           <label class="event__label  event__type-output" for="event-destination-1">
               ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(destination.name)}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinations.name}" list="destination-list-1" ${isDisabled ? 'disabled' : ''}>
           <datalist id="destination-list-1">
-              <option value="Amsterdam"></option>
-              <option value="Geneva"></option>
-              <option value="Chamonix"></option>
-              <option value="London"></option>
-              <option value="Moscow"></option>
+
           </datalist>
           </div>
 
           <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dateStart}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dateStart}" ${isDisabled ? 'disabled' : ''}>
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dateEnd}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dateEnd}" ${isDisabled ? 'disabled' : ''}>
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -106,11 +108,11 @@ function createEventTemplate({ basePrice, dateFrom, dateTo, type, offers, offers
               <span class="visually-hidden">Price</span>
               &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${parseInt(basePrice, 10)}" min="1">
+          <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${parseInt(basePrice, 10)}" min="1" ${isDisabled ? 'disabled' : ''}>
           </div>
 
-          <button class="event__save-btn  btn  btn--blue" type="submit">${isSaving ? 'Saving...' : 'Save'}</button>
-          <button class="event__reset-btn" type="reset">${isDeleting ? 'Deleting...' : 'Delete'}</button>
+          <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
+          <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${isDeleting ? 'Deleting...' : 'Delete'}</button>
         <button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>
         </button>
@@ -120,17 +122,18 @@ function createEventTemplate({ basePrice, dateFrom, dateTo, type, offers, offers
       ${offersPoint.length !== 0 ? createOffersTemplate(offers, offersPoint) : ''}
       </section>
           <section class="event__section  event__section--destination">
-          ${destination.pictures.length !== 0 ? createDestinationTemplate(destination) : ''}
+          ${createDestinationTemplate(destinations)}
       </section>
       </section>
       </form>
   </li>
 `;
 }
+// ${destinations.pictures.length !== 0 ? createDestinationTemplate(destinations) : ''}
 
 export default class FormEditView extends AbstractStatefulView {
   #point = null;
-  #destination = null;
+  #destinations = null;
   #offersPoint = null;
   #datepickerFrom = null;
   #datepickerTo = null;
@@ -138,17 +141,20 @@ export default class FormEditView extends AbstractStatefulView {
   #handleRollupButtonClick = null;
   #handleDeleteButtonClick = null;
 
-  constructor({ point, destination, offers, onFormSubmit, onRollupButtonClick, onDeleteButtonClick }) {
+  constructor({ point, destinations, offers, allOffers, allDestinations, onFormSubmit, onRollupButtonClick, onDeleteButtonClick }) {
     super();
     this.#point = point;
-    this.#destination = destination;
+    this.#destinations = destinations;
     this.#offersPoint = offers;
+    this.allOffers = allOffers;
+    this.allDestinations = allDestinations;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleRollupButtonClick = onRollupButtonClick;
     this.#handleDeleteButtonClick = onDeleteButtonClick;
 
-    this._setState(FormEditView.parsePointToState(this.#point, this.#offersPoint.offers, this.#destination));
+    this._setState(FormEditView.parsePointToState(this.#point, this.#offersPoint.offers, this.#destinations));
     this._restoreHandlers();
+    // console.log(this._state);
   }
 
   get template() {
@@ -185,7 +191,7 @@ export default class FormEditView extends AbstractStatefulView {
     if (this._state.dateFrom <= this._state.dateTo) {
       this.#handleFormSubmit(FormEditView.parseStateToPoint({
         ...this._state,
-        destination: this._state.destination.id
+        destinations: this._state.destination.id
       }));
     }
   };
@@ -208,7 +214,7 @@ export default class FormEditView extends AbstractStatefulView {
 
   #onTypeChange = (evt) => {
     evt.preventDefault();
-    const typedOffers = mockOffers.find((offer) => offer.type === evt.target.value);
+    const typedOffers = this.allOffers.find((offer) => offer.type === evt.target.value);
     this.updateElement({
       type: evt.target.value,
       offersPoint: typedOffers === undefined ? [] : typedOffers.offers,
@@ -218,12 +224,12 @@ export default class FormEditView extends AbstractStatefulView {
 
   #onDestinationChange = (evt) => {
     evt.preventDefault();
-    const selectedDestination = mockDestinations.find((destination) => destination.name === evt.target.value);
+    const selectedDestination = this.allDestinations.find((destination) => destination.name === evt.target.value);
     if (!selectedDestination) {
       return;
     }
     this.updateElement({
-      destination: selectedDestination,
+      destinations: selectedDestination,
     });
   };
 
@@ -235,13 +241,29 @@ export default class FormEditView extends AbstractStatefulView {
     });
   };
 
-  static parsePointToState = (point, offersPoint, destination) => ({ ...point, offersPoint, destination, isDeleting: false });
+  static parsePointToState = (point, offersPoint, destinations) =>
+    ({
+      ...point,
+      offersPoint,
+      destinations,
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false
+    });
 
-  static parseStateToPoint = (state) => ({ ...state });
+  static parseStateToPoint(state) {
+    const point = { ...state };
 
-  reset(point, offersPoint, destination) {
+    delete point.isDeleting;
+    delete point.isDisabled;
+    delete point.isSaving;
+
+    return point;
+  }
+
+  reset(point, offersPoint, destinations, allDestinations) {
     this.updateElement(
-      FormEditView.parsePointToState(point, offersPoint.offers, destination)
+      FormEditView.parsePointToState(point, offersPoint.offers, destinations, allDestinations)
     );
   }
 

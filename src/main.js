@@ -7,13 +7,26 @@ import PointsModel from './model/points-model.js';
 import DestinatonsModel from './model/destinations-model.js';
 import OffersModel from './model/offers-model.js';
 import FilterModel from './model/filter-model.js';
+import PointsApiService from './api/points-api-service.js';
+import OffersApiService from './api/offers-api-service.js';
+import DestinationsApiService from './api/destinations-api-service.js';
+
+const AUTHORIZATION = 'Basic acsvw345465';
+const END_POINT = 'https://23.objects.htmlacademy.pro/big-trip';
 
 const tripMainContainer = document.querySelector('.trip-main');
 const eventsContainer = document.querySelector('.trip-events');
 const filterContainer = document.querySelector('.trip-controls__filters');
-const pointsModel = new PointsModel();
-const destinationsModel = new DestinatonsModel();
-const offersModel = new OffersModel();
+const pointsModel = new PointsModel({
+  pointsApiService: new PointsApiService(END_POINT, AUTHORIZATION)
+});
+const destinationsModel = new DestinatonsModel({
+  destinationsApiService: new DestinationsApiService(END_POINT, AUTHORIZATION)
+});
+const offersModel = new OffersModel({
+  offersApiService: new OffersApiService(END_POINT, AUTHORIZATION)
+});
+
 const filterModel = new FilterModel();
 
 const mainPresenter = new MainPresenter({
@@ -40,13 +53,18 @@ function handleNewPointFormClose() {
 }
 
 function handleNewPointButtonClick() {
-  mainPresenter.createPoint(destinationsModel.destinations);
+  mainPresenter.createPoint(destinationsModel.destinations, offersModel.offers);
+  // console.log(destinationsModel);
+
   newPointButtonComponent.element.disabled = true;
 }
-
-render(newPointButtonComponent, tripMainContainer);
 
 render(new InfoTripView(), tripMainContainer, RenderPosition.AFTERBEGIN);
 
 filterPresenter.init();
 mainPresenter.init();
+Promise.all([destinationsModel.init(), offersModel.init()])
+  .then(() => pointsModel.init())
+  .finally(() => {
+    render(newPointButtonComponent, tripMainContainer);
+  });
