@@ -30,12 +30,10 @@ export default class NewPointPresenter {
     }
 
     const allOffers = this.#offersModel.offers;
-    const allDestinations = this.#destinationsModel.destinations;
 
     this.#addPointFormComponent = new AddFormView({
       offers: this.#offersModel.getOffersByType('flight'),
       destinations: this.#destinations,
-      allDestinations: allDestinations,
       allOffers: allOffers,
       onFormSubmit: this.#handleFormSubmit,
       onCancelButtonClick: this.#handleCancelButtonClick,

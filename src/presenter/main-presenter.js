@@ -2,6 +2,7 @@ import EventListView from '../view/event-list-view.js';
 import SortView from '../view/sort-view.js';
 import NoPointView from '../view/no-point-view.js';
 import LoadingView from '../view/loading-view.js';
+import FailedLoadDataView from '../view/failed-load-data-view.js';
 import PointPresenter from './point-presenter.js';
 import NewPointPresenter from './new-point-presenter.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
@@ -30,7 +31,9 @@ export default class MainPresenter {
   #sortComponent = null;
   #eventListComponent = new EventListView();
   #loadingComponent = new LoadingView();
+  #faildLoadComponent = new FailedLoadDataView();
   #isLoading = true;
+  #isError = false;
   #noPointComponent = null;
   #filterType = FilterType.EVERYTHING;
 
@@ -45,6 +48,7 @@ export default class MainPresenter {
     this.#offersModel = offersModel;
     this.#destinationsModel = destinationsModel;
     this.#filterModel = filterModel;
+    // console.log(this.#destinationsModel);
 
     this.#newPointPresenter = new NewPointPresenter({
       offersModel: this.#offersModel,
@@ -83,6 +87,8 @@ export default class MainPresenter {
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this.#newPointPresenter.init({ destinations, offers });
+    // console.log(destinations);
+
   }
 
   #handleModeChange = () => {
@@ -143,6 +149,13 @@ export default class MainPresenter {
       case UpdateType.INIT:
         this.#isLoading = false;
         remove(this.#loadingComponent);
+        remove(this.#faildLoadComponent);
+        this.#renderComponent();
+        break;
+      case UpdateType.ERROR:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#isError = true;
         this.#renderComponent();
         break;
     }
@@ -199,6 +212,10 @@ export default class MainPresenter {
     render(this.#loadingComponent, this.#container);
   }
 
+  #renderFaildLoad() {
+    render(this.#faildLoadComponent, this.#container);
+  }
+
   #clearComponent({ resetSortType = false } = {}) {
     this.#newPointPresenter.destroy();
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
@@ -206,6 +223,7 @@ export default class MainPresenter {
 
     remove(this.#sortComponent);
     remove(this.#loadingComponent);
+    remove(this.#faildLoadComponent);
 
     if (this.#noPointComponent) {
       remove(this.#noPointComponent);
@@ -221,6 +239,11 @@ export default class MainPresenter {
 
     if (this.#isLoading) {
       this.#renderLoading();
+      return;
+    }
+
+    if (this.#isError) {
+      this.#renderFaildLoad();
       return;
     }
 

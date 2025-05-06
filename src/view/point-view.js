@@ -19,7 +19,8 @@ function createOffersTemplate(offersPoint, offers) {
 
 function createPointTemplate(point, destinations, offersPoint) {
   const { basePrice, type, dateFrom, dateTo, isFavorite, offers } = point;
-
+  // console.log(point);
+  // console.log(destinations);
   const date = convertDate(dateFrom, DateFormat.DAY);
   const dateStart = convertDate(dateFrom, DateFormat.FULL);
   const dateEnd = convertDate(dateTo, DateFormat.FULL);

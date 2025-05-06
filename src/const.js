@@ -71,7 +71,8 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
-  INIT: 'INIT'
+  INIT: 'INIT',
+  ERROR: 'ERROR'
 };
 
 const BLANK_POINT = {
@@ -81,7 +82,7 @@ const BLANK_POINT = {
   isFavorite: false,
   offers: [],
   offersPoint: [],
-  destination: null,
+  // destination: null,
   type: 'flight',
   name: ''
 };

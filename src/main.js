@@ -12,7 +12,7 @@ import OffersApiService from './api/offers-api-service.js';
 import DestinationsApiService from './api/destinations-api-service.js';
 
 const AUTHORIZATION = 'Basic acsvw345465';
-const END_POINT = 'https://22.objects.htmlacademy.pro/big-trip';
+const END_POINT = 'https://23.objects.htmlacademy.pro/big-trip';
 
 const tripMainContainer = document.querySelector('.trip-main');
 const eventsContainer = document.querySelector('.trip-events');
@@ -54,6 +54,8 @@ function handleNewPointFormClose() {
 
 function handleNewPointButtonClick() {
   mainPresenter.createPoint(destinationsModel.destinations, offersModel.offers);
+  // console.log(destinationsModel);
+
   newPointButtonComponent.element.disabled = true;
 }
 

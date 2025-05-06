@@ -40,6 +40,7 @@ export default class PointPresenter {
       point: this.#point,
       offers: this.#offers,
       destinations: this.#destinations,
+      // allDestinations: allDestinations,
       onRollupButtonClick: this.#handlePointRollupButtonClick,
       onFavoriteClick: this.#handleFavoriteButtonClick,
     });
@@ -54,7 +55,8 @@ export default class PointPresenter {
       onRollupButtonClick: this.#handleRollupButtonClick,
       onDeleteButtonClick: this.#handleDeleteButtonClick,
     });
-
+    // console.log(destinations);
+    // console.log(allDestinations);
     if (prevPointListComponent === null || prevFormEditListComponent === null) {
       render(this.#pointListComponent, this.#eventListContainer);
       return;
@@ -159,7 +161,6 @@ export default class PointPresenter {
 
   #handleFormSubmit = (point) => {
     const isMinorUpdate = !isDatesEqual(this.#point.dueDate, point.dueDate);
-
     this.#handleDataChange(
       UserAction.UPDATE_POINT,
       isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
