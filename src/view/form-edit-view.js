@@ -2,7 +2,7 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { convertDate } from '../utils/main.js';
 import { capitalizeFirstLetter } from '../utils/common.js';
 import { POINT_TYPES, DateFormat } from '../const.js';
-import he from 'he';
+// import he from 'he';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
@@ -59,12 +59,12 @@ function createDestinationTemplate(destinations) {
   return '';
 }
 
-function createEventTemplate({ basePrice, dateFrom, dateTo, type, offers, destinations, allDestinations, offersPoint, isDeleting, isSaving, isDisabled }) {
+function createEventTemplate({ basePrice, dateFrom, dateTo, type, offers, destinations, offersPoint, isDeleting, isSaving, isDisabled }) {
   const dateStart = convertDate(dateFrom, DateFormat.DAY_TIME);
   const dateEnd = convertDate(dateTo, DateFormat.DAY_TIME);
-  console.log(destinations);
+  // console.log(destinations);
   // console.log(allDestinations);
-//  ${createDestinationListTemplate(allDestinations)}
+  //  ${createDestinationListTemplate(allDestinations)}
   return `
   <li class="trip-events__item">
       <form class="event event--edit" action="#" method="post">
@@ -122,7 +122,7 @@ function createEventTemplate({ basePrice, dateFrom, dateTo, type, offers, destin
       ${offersPoint.length !== 0 ? createOffersTemplate(offers, offersPoint) : ''}
       </section>
           <section class="event__section  event__section--destination">
-          ${destinations.pictures.length !== 0 ? createDestinationTemplate(destinations) : ''}
+          ${createDestinationTemplate(destinations)}
       </section>
       </section>
       </form>
@@ -246,7 +246,6 @@ export default class FormEditView extends AbstractStatefulView {
       ...point,
       offersPoint,
       destinations,
-      // allDestinations,
       isDisabled: false,
       isSaving: false,
       isDeleting: false
