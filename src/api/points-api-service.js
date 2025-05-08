@@ -57,7 +57,7 @@ export default class PointsApiService extends ApiService {
       'is_favorite': point.isFavorite,
       'is_deleting': point.isDeleting,
       'is_disabled': point.isDisabled,
-      'base_price': point.basePrice
+      'base_price': +point.basePrice
     };
 
     delete adaptedPoint.dateFrom;
@@ -66,6 +66,10 @@ export default class PointsApiService extends ApiService {
     delete adaptedPoint.isDeleting;
     delete adaptedPoint.isDisabled;
     delete adaptedPoint.basePrice;
+    delete adaptedPoint.offersPoint;
+    delete adaptedPoint.destinations;
+    delete adaptedPoint.allDestinations;
+    delete adaptedPoint.name;
 
     return adaptedPoint;
   }

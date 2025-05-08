@@ -54,7 +54,6 @@ function handleNewPointFormClose() {
 
 function handleNewPointButtonClick() {
   mainPresenter.createPoint(destinationsModel.destinations, offersModel.offers);
-  // console.log(destinationsModel);
 
   newPointButtonComponent.element.disabled = true;
 }

@@ -44,8 +44,6 @@ export default class PointsModel extends Observable {
     } catch(err) {
       throw new Error('Can\'t update point');
     }
-    this.#points = [...this.#points.slice(0, index), update, ...this.#points.slice(index + 1)];
-    this._notify(updateType, update);
   }
 
   async addPoint(updateType, update) {

@@ -40,7 +40,7 @@ export default class PointPresenter {
       point: this.#point,
       offers: this.#offers,
       destinations: this.#destinations,
-      // allDestinations: allDestinations,
+      allDestinations: allDestinations,
       onRollupButtonClick: this.#handlePointRollupButtonClick,
       onFavoriteClick: this.#handleFavoriteButtonClick,
     });
@@ -50,13 +50,13 @@ export default class PointPresenter {
       offers: this.#offers,
       allOffers: allOffers,
       allDestinations: allDestinations,
+      destinationsModel: this.#destinationsModel,
       destinations: this.#destinations,
       onFormSubmit: this.#handleFormSubmit,
       onRollupButtonClick: this.#handleRollupButtonClick,
       onDeleteButtonClick: this.#handleDeleteButtonClick,
     });
-    // console.log(destinations);
-    // console.log(allDestinations);
+
     if (prevPointListComponent === null || prevFormEditListComponent === null) {
       render(this.#pointListComponent, this.#eventListContainer);
       return;
