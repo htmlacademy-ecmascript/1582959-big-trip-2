@@ -1,6 +1,7 @@
 import AddFormView from '../view/add-form-view.js';
 import { UserAction, UpdateType } from '../const.js';
 import { RenderPosition, render, remove } from '../framework/render.js';
+import { DEFAULT_TYPE } from '../const.js';
 
 export default class NewPointPresenter {
 
@@ -32,7 +33,7 @@ export default class NewPointPresenter {
     const allOffers = this.#offersModel.offers;
 
     this.#addPointFormComponent = new AddFormView({
-      offers: this.#offersModel.getOffersByType('flight'),
+      offers: this.#offersModel.getOffersByType(DEFAULT_TYPE),
       destinations: this.#destinations,
       allOffers: allOffers,
       onFormSubmit: this.#handleFormSubmit,

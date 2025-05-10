@@ -2,7 +2,7 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { convertDate } from '../utils/main.js';
 import { capitalizeFirstLetter } from '../utils/common.js';
 import { POINT_TYPES, DateFormat } from '../const.js';
-// import he from 'he';
+import he from 'he';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
@@ -53,15 +53,14 @@ function createDestinationTemplate(allDestinations, state) {
 
   if (foundDestination && foundDestination.pictures.length > 0 || foundDestination.description) {
     return `
-    <article class="event__destination-section">
       <h3 class="event__section-title event__section-title--destination">Destination</h3>
       <p class="event__destination-description">${foundDestination.description}</p>
+      ${foundDestination.pictures.length === 0 ? '' : `
       <div class="event__photos-container">
         <div class="event__photos-tape">
           ${photos}
         </div>
-      </div>
-    </article>
+      </div>`}
   `;
   }
   return '';
@@ -104,7 +103,7 @@ function createEventTemplate(state) {
           <label class="event__label  event__type-output" for="event-destination-1">
               ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${findDestinationName(allDestinations, state)}" list="destination-list-1" ${isDisabled ? 'disabled' : ''}>
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(findDestinationName(allDestinations, state))}" list="destination-list-1" ${isDisabled ? 'disabled' : ''}>
           <datalist id="destination-list-1">
           ${createDestinationListTemplate(allDestinations)}
           </datalist>
@@ -144,7 +143,7 @@ function createEventTemplate(state) {
   </li>
 `;
 }
-// ${createDestinationTemplate(allDestinations, state)}
+
 export default class FormEditView extends AbstractStatefulView {
   #point = null;
   #destinations = null;

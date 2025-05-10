@@ -26,7 +26,7 @@ function getEventDuration(dateFrom, dateTo) {
 
 const isFuturePoint = ({ dateFrom }) => dayjs().isBefore(dateFrom, 'day');
 const isPresentPoint = ({ dateFrom }) => dayjs().isSame(dateFrom, 'day');
-const isPastPoint = ({ dateFrom }) => dayjs().isAfter(dateFrom, 'day');
+const isPastPoint = ({ dateFrom, dateTo }) => dayjs().isAfter(dateFrom, 'day') && dayjs().isAfter(dateTo, 'day');
 
 function getWeightForNullDate(dateA, dateB) {
   if (dateA === null && dateB === null) {

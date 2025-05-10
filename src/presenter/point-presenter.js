@@ -68,6 +68,7 @@ export default class PointPresenter {
 
     if (this.#mode === Mode.EDITING) {
       replace(this.#pointListComponent, prevFormEditListComponent);
+      this.#mode = Mode.DEFAULT;
     }
 
     remove(prevPointListComponent);
@@ -137,8 +138,10 @@ export default class PointPresenter {
   #onEscapeKeydown = (evt) => {
     if (evt.key === 'Escape') {
       evt.preventDefault();
-      this.#formEditListComponent.reset(this.#point, this.#offers, this.#destinations);
-      this.#replaceFormEditToPoint();
+      if (this.#mode !== Mode.DEFAULT) {
+        this.#formEditListComponent.reset(this.#point, this.#offers, this.#destinations);
+        this.#replaceFormEditToPoint();
+      }
     }
   };
 
