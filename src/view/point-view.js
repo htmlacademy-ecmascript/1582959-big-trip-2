@@ -19,8 +19,7 @@ function createOffersTemplate(offersPoint, offers) {
 
 function createPointTemplate(point, destinations, offersPoint) {
   const { basePrice, type, dateFrom, dateTo, isFavorite, offers } = point;
-  // console.log(point);
-  // console.log(destinations);
+
   const date = convertDate(dateFrom, DateFormat.DAY);
   const dateStart = convertDate(dateFrom, DateFormat.FULL);
   const dateEnd = convertDate(dateTo, DateFormat.FULL);
@@ -76,10 +75,11 @@ export default class PointView extends AbstractView {
   #handlePointRollupButtonClick = null;
   #handleFavoriteButtonClick = null;
 
-  constructor({ point, destinations, offers, onRollupButtonClick, onFavoriteClick }) {
+  constructor({ point, destinations, allDestinations, offers, onRollupButtonClick, onFavoriteClick }) {
     super();
     this.#point = point;
     this.#destinations = destinations;
+    this.allDestinations = allDestinations;
     this.#offersPoint = offers;
     this.#handlePointRollupButtonClick = onRollupButtonClick;
     this.#handleFavoriteButtonClick = onFavoriteClick;
@@ -92,7 +92,7 @@ export default class PointView extends AbstractView {
   }
 
   get template() {
-    return createPointTemplate(this.#point, this.#destinations, this.#offersPoint);
+    return createPointTemplate(this.#point, this.#destinations, this.#offersPoint, this.allDestinations);
   }
 
   #onEventRollupButtonClick = (evt) => {

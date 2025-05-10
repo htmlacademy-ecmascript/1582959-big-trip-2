@@ -47,25 +47,22 @@ function createDestinationListTemplate(destinations) {
 function createDestinationTemplate(destinations, name) {
   const foundDestination = destinations.find((destination) => destination.name === name);
 
-  if (!foundDestination) {
-    return '';
-  }
-
   const photos = foundDestination.pictures.map((picture) => (
     `<img class="event__photo" src="${picture.src}" alt="${picture.description}"/>`
   )).join('');
-
-  return `
-    <article class="event__destination-section">
+  if (foundDestination && foundDestination.pictures.length > 0 || foundDestination.description) {
+    return `
       <h3 class="event__section-title event__section-title--destination">Destination</h3>
       <p class="event__destination-description">${foundDestination.description}</p>
+      ${foundDestination.pictures.length === 0 ? '' : `
       <div class="event__photos-container">
         <div class="event__photos-tape">
           ${photos}
         </div>
-      </div>
-    </article>
+      </div>`}
   `;
+  }
+  return '';
 }
 
 function createAddPointTemplate({ basePrice, dateFrom, dateTo, type, name, offers, offersPoint, destinations, isDisabled, isSaving }) {

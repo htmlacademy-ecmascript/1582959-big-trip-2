@@ -48,7 +48,6 @@ export default class MainPresenter {
     this.#offersModel = offersModel;
     this.#destinationsModel = destinationsModel;
     this.#filterModel = filterModel;
-    // console.log(this.#destinationsModel);
 
     this.#newPointPresenter = new NewPointPresenter({
       offersModel: this.#offersModel,
@@ -87,7 +86,6 @@ export default class MainPresenter {
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this.#newPointPresenter.init({ destinations, offers });
-    // console.log(destinations);
 
   }
 
