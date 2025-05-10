@@ -25,7 +25,7 @@ function createOffersTemplate(offers, offersPoint = []) {
     return ` <h3 class="event__section-title  event__section-title--offers">Offers</h3>
         <div class="event__available-offers">
           ${offersPoint.map(({ title, price, id }) => (
-      `<div class="event__offer-selector">
+    `<div class="event__offer-selector">
           <input class="event__offer-checkbox visually-hidden" id="${id}" type="checkbox" name="${title}" ${offers.includes(id) ? 'checked' : ''}>
           <label class="event__offer-label" for="${id}">
             <span class="event__offer-title">${title}</span>
@@ -234,13 +234,13 @@ export default class AddFormView extends AbstractStatefulView {
   };
 
   static parsePointToState = (point, offersPoint, destinations) =>
-  ({
-    ...point,
-    offersPoint,
-    destinations,
-    isDisabled: false,
-    isSaving: false
-  });
+    ({
+      ...point,
+      offersPoint,
+      destinations,
+      isDisabled: false,
+      isSaving: false
+    });
 
   static parseStateToPoint(state) {
     const point = { ...state };
