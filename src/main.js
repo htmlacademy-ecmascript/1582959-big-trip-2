@@ -1,10 +1,10 @@
-import { render, RenderPosition } from './framework/render.js';
-import InfoTripView from './view/info-trip-view.js';
+import { render } from './framework/render.js';
+import InfoTripPresenter from './presenter/info-trip-presenter.js';
 import NewPointButtonView from './view/new-point-button-view.js';
 import MainPresenter from './presenter/main-presenter.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import PointsModel from './model/points-model.js';
-import DestinatonsModel from './model/destinations-model.js';
+import DestinationsModel from './model/destinations-model.js';
 import OffersModel from './model/offers-model.js';
 import FilterModel from './model/filter-model.js';
 import PointsApiService from './api/points-api-service.js';
@@ -20,7 +20,7 @@ const filterContainer = document.querySelector('.trip-controls__filters');
 const pointsModel = new PointsModel({
   pointsApiService: new PointsApiService(END_POINT, AUTHORIZATION)
 });
-const destinationsModel = new DestinatonsModel({
+const destinationsModel = new DestinationsModel({
   destinationsApiService: new DestinationsApiService(END_POINT, AUTHORIZATION)
 });
 const offersModel = new OffersModel({
@@ -29,23 +29,31 @@ const offersModel = new OffersModel({
 
 const filterModel = new FilterModel();
 
+const newPointButtonComponent = new NewPointButtonView({
+  onClick: handleNewPointButtonClick,
+});
+
 const mainPresenter = new MainPresenter({
   container: eventsContainer,
   pointsModel,
   destinationsModel,
   offersModel,
   filterModel,
+  newPointButtonComponent,
   onNewPointDestroy: handleNewPointFormClose
+});
+
+const infoTripPresenter = new InfoTripPresenter({
+  tripMainContainer,
+  pointsModel,
+  offersModel,
+  destinationsModel,
 });
 
 const filterPresenter = new FilterPresenter({
   filterContainer: filterContainer,
   filterModel,
   pointsModel
-});
-
-const newPointButtonComponent = new NewPointButtonView({
-  onClick: handleNewPointButtonClick,
 });
 
 function handleNewPointFormClose() {
@@ -58,10 +66,9 @@ function handleNewPointButtonClick() {
   newPointButtonComponent.element.disabled = true;
 }
 
-render(new InfoTripView(), tripMainContainer, RenderPosition.AFTERBEGIN);
-
 filterPresenter.init();
 mainPresenter.init();
+infoTripPresenter.init();
 Promise.all([destinationsModel.init(), offersModel.init()])
   .then(() => pointsModel.init())
   .finally(() => {

@@ -29,6 +29,7 @@ export default class MainPresenter {
   #currentSortType = SortType.DAY;
 
   #sortComponent = null;
+  #newPointButtonComponent = null;
   #eventListComponent = new EventListView();
   #loadingComponent = new LoadingView();
   #faildLoadComponent = new FailedLoadDataView();
@@ -42,12 +43,13 @@ export default class MainPresenter {
     upperLimit: TimeLimit.UPPER_LIMIT
   });
 
-  constructor({ container, pointsModel, offersModel, destinationsModel, filterModel, onNewPointDestroy }) {
+  constructor({ container, pointsModel, offersModel, destinationsModel, newPointButtonComponent, filterModel, onNewPointDestroy }) {
     this.#container = container;
     this.#pointsModel = pointsModel;
     this.#offersModel = offersModel;
     this.#destinationsModel = destinationsModel;
     this.#filterModel = filterModel;
+    this.#newPointButtonComponent = newPointButtonComponent;
 
     this.#newPointPresenter = new NewPointPresenter({
       offersModel: this.#offersModel,
@@ -212,6 +214,7 @@ export default class MainPresenter {
 
   #renderFaildLoad() {
     render(this.#faildLoadComponent, this.#container);
+    this.#newPointButtonComponent.element.disabled = true;
   }
 
   #clearComponent({ resetSortType = false } = {}) {

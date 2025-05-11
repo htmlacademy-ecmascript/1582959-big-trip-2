@@ -32,6 +32,7 @@ const DateFormat = {
   DAY: 'MMM D',
   TIME: 'HH:mm',
   FULL: 'YYYY-MM-DD',
+  ROUTE: 'D MMM',
   DAY_TIME: 'DD/MM/YY HH:mm'
 };
 
@@ -65,4 +66,4 @@ const BLANK_POINT = {
   name: ''
 };
 
-export { DateFormat, POINT_TYPES, FilterType, Mode, SortType, UserAction, UpdateType, BLANK_POINT, DEFAULT_TYPE };
+export { DateFormat, DEFAULT_PRICE, POINT_TYPES, FilterType, Mode, SortType, UserAction, UpdateType, BLANK_POINT, DEFAULT_TYPE };
